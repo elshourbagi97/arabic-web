@@ -1,0 +1,12 @@
+node_modules
+.git
+.env
+.env.*
+vendor
+storage
+tests
+tmp
+dist
+build
+/.vscode
+/.idea

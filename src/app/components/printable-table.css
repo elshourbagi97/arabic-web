@@ -1,0 +1,116 @@
+/* A4 landscape print settings */
+@page {
+  size: A4 landscape;
+  margin: 18mm;
+}
+
+/* Ensure exact colors when printing */
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.printable-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6mm;
+}
+
+.print-controls {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.print-button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.no-print {
+  display: block;
+}
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+.print-area {
+  direction: rtl;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* equal column widths */
+  font-size: 12.5pt;
+  border: 1px solid #e0e0e0;
+}
+
+.record-table caption.table-title {
+  caption-side: top;
+  text-align: center;
+  font-size: 18pt;
+  font-weight: 700;
+  padding: 8px 0 12px 0;
+}
+
+.record-table thead th {
+  background: #f5f5f5;
+  border: 1px solid #e6e6e6;
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 700;
+}
+
+.record-table tbody td,
+.record-table tbody th {
+  border: 1px solid #ececec;
+  padding: 10px 8px;
+  text-align: center;
+  vertical-align: middle;
+  height: 52px; /* equal row height */
+  line-height: 1.4;
+  white-space: normal; /* allow wrapping for long Arabic text */
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.record-table .col-number,
+.record-table .row-number {
+  width: 56px;
+  max-width: 56px;
+  text-align: center;
+}
+
+/* Improve print density: use slightly smaller caption and subtle separator */
+.record-table caption.table-title {
+  caption-side: top;
+  text-align: center;
+  font-size: 16pt;
+  font-weight: 700;
+  padding: 6px 0 10px 0;
+  color: #222;
+}
+
+/* Make sure table spans full printable width */
+@media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  .printable-page {
+    padding: 0;
+  }
+  .record-table {
+    width: 100%;
+  }
+}
