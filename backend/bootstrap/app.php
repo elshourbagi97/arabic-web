@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Stateful API middleware removed - using token-based auth instead
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'cors' => \App\Http\Middleware\HandleCors::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

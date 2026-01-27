@@ -8,12 +8,13 @@ use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\PdfExportController;
 use App\Http\Controllers\Api\AdminController;
 
-// Public routes
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/register', [AuthController::class, 'register']);
+Route::middleware('cors')->group(function () {
+    // Public routes
+    Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/register', [AuthController::class, 'register']);
 
-// Protected routes
-Route::middleware('auth:sanctum')->group(function () {
+    // Protected routes
+    Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/profile', [AuthController::class, 'profile']);
@@ -47,5 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/users', [AdminController::class, 'getAllUsers']);
         Route::get('/admin/users/{user}', [AdminController::class, 'getUserDetails']);
         Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
+    });
     });
 });
