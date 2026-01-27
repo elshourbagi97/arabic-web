@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "npx vite build",
     "dev": "vite",
+    "preview": "vite preview",
     "start-pdf-server": "node scripts/pdf-server.js",
     "pm2-start-pdf": "pm2 start ecosystem.config.js --only pdf-server && pm2 save",
     "pm2-stop-pdf": "pm2 stop pdf-server || true"
@@ -70,7 +71,8 @@
     "tw-animate-css": "1.3.8",
     "vaul": "1.1.2",
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
