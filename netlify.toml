@@ -3,6 +3,9 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  NPM_CONFIG_PRODUCTION = "false"
+
 # Optional: local dev command used by Netlify Dev
 [dev]
   command = "npm run dev"
