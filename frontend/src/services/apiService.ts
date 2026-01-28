@@ -7,7 +7,7 @@ import axios, { AxiosInstance } from "axios";
 
 class ApiService {
   private api: AxiosInstance;
-  private baseURL = "https://cheerier-zina-snappable.ngrok-free.dev/api";
+  private baseURL = "https://arabic-web-production.up.railway.app/api";
   private token: string | null = null;
 
   constructor() {

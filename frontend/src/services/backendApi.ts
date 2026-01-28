@@ -1,7 +1,7 @@
 // API Service for Backend Communication
 // This file contains all API calls to the Laravel backend
 
-const API_BASE_URL = "https://cheerier-zina-snappable.ngrok-free.dev/api";
+const API_BASE_URL = "https://arabic-web-production.up.railway.app/api";
 
 // Helper function to get auth token
 function getAuthToken(): string | null {
