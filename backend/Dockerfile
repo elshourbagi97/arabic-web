@@ -22,6 +22,16 @@ RUN composer install --no-dev --optimize-autoloader
 # Generate app key
 RUN php artisan key:generate
 
+# Set default environment variables
+ENV DB_CONNECTION=mysql
+ENV DB_HOST=db
+ENV DB_PORT=3306
+ENV DB_DATABASE=arabicwebsite_db
+ENV DB_USERNAME=root
+ENV DB_PASSWORD=root
+ENV APP_ENV=local
+ENV APP_DEBUG=true
+
 # Expose port
 EXPOSE 10000
 
