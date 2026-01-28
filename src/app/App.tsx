@@ -74,6 +74,7 @@ function App() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [sections, setSections] = useState<string[]>([]);
   const [showAddSection, setShowAddSection] = useState(false);
+
   const [newSectionName, setNewSectionName] = useState("");
   const [sectionError, setSectionError] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);

@@ -4,7 +4,82 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-app.use(cors());
+
+// Try to load dotenv (synchronously) if available so .env works in ESM
+try {
+  const require = createRequire(import.meta.url);
+  require("dotenv").config();
+} catch (e) {
+  // dotenv not installed or failed to load; continue without it
+}
+
+// Read allowed origins from env (comma-separated). Support wildcards and ensure localhost dev origin is allowed.
+const rawAllowed =
+  process.env.ALLOWED_ORIGINS ||
+  "https://cheerier-zina-snappable.ngrok-free.dev";
+const allowedEntries = rawAllowed
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+let allowAllOrigins = false;
+const exactOrigins = [];
+const regexOrigins = [];
+
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&");
+for (const entry of allowedEntries) {
+  if (entry === "*") {
+    allowAllOrigins = true;
+    break;
+  }
+  if (entry.includes("*")) {
+    const pattern = "^" + escapeRegex(entry).replace(/\\\*/g, ".*") + "$";
+    try {
+      regexOrigins.push(new RegExp(pattern));
+    } catch (e) {
+      // ignore invalid patterns
+    }
+  } else {
+    exactOrigins.push(entry);
+  }
+}
+
+if (
+  process.env.NODE_ENV !== "production" &&
+  !exactOrigins.includes("http://localhost:5175") &&
+  !allowAllOrigins
+) {
+  exactOrigins.push("http://localhost:5175");
+}
+
+const originAllowed = (origin) => {
+  if (!origin) return true; // non-browser requests
+  if (allowAllOrigins) return true;
+  if (exactOrigins.includes(origin)) return true;
+  return regexOrigins.some((r) => r.test(origin));
+};
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (originAllowed(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "X-API-KEY",
+    "Accept",
+  ],
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+// Ensure preflight answers for all routes
+app.options("*", cors(corsOptions));
+
 app.use(express.json({ limit: "20mb" }));
 
 const escapeHtml = (str) =>

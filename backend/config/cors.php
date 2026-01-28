@@ -9,6 +9,7 @@ return [
     // Exact domains (production)
     'allowed_origins' => [
         'https://brilliant-kleicha-595a66.netlify.app',
+        'https://cheerier-zina-snappable.ngrok-free.dev'
     ],
 
     // Any localhost port (development)

@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Temporary debug route to inspect headers (remove in production)
+// Optional debug route (safe)
 Route::get('/debug-cors', function () {
     return response()->json(headers_list());
 });
 
-// Catch-all route for frontend
+// Serve React SPA, but NEVER intercept /api routes
 Route::get('/{any}', function () {
     return file_get_contents(public_path('index.html'));
-})->where('any', '.*');
+})->where('any', '^(?!api).*');

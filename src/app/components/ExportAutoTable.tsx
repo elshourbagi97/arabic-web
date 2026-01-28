@@ -74,7 +74,8 @@ export async function exportHtmlTableToPdf(tableId: string) {
     // console.warn('Arabic font load failed', e);
   }
 
-  const fontName = (doc.getFont()?.key as string) || "Amiri";
+  // jsPDF font object types vary; access via `any` to avoid TS errors
+  const fontName = ((doc.getFont() as any)?.key as string) || "Amiri";
   const fontSize = 12;
 
   // Right-align all columns for Arabic readability

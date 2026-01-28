@@ -173,7 +173,11 @@ export async function exportTableToPDF(tableId: string): Promise<void> {
 export default function ExportByTableExample() {
   return (
     <div
-      style={{ padding: 16, direction: "rtl", fontFamily: "Amiri, Cairo, sans-serif" }}
+      style={{
+        padding: 16,
+        direction: "rtl",
+        fontFamily: "Amiri, Cairo, sans-serif",
+      }}
     >
       <button
         onClick={() => exportTableToPDF("inspectionTable")}

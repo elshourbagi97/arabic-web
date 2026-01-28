@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "@/lib/axios";
 
 interface UserData {
   email: string;
@@ -26,13 +26,10 @@ export function LoginForm({ onLogin }: LoginFormProps) {
     setLoginError("");
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/auth/login",
-        {
-          email,
-          password,
-        },
-      );
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
       console.log("API Response:", response.data);
 

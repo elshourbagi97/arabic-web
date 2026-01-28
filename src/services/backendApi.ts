@@ -1,7 +1,7 @@
 // API Service for Backend Communication
 // This file contains all API calls to the Laravel backend
 
-const API_BASE_URL = "http://127.0.0.1:8000/api";
+import api from "@/lib/axios";
 
 // Helper function to get auth token
 function getAuthToken(): string | null {
@@ -24,56 +24,33 @@ async function apiRequest(
   method: string = "GET",
   body?: any,
 ): Promise<any> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-  };
-
   const token = getAuthToken();
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+
+  try {
+    const resp = await api.request({
+      url: endpoint,
+      method: method as any,
+      data: body ?? undefined,
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    });
+
+    return resp.data;
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      removeAuthToken();
+      window.location.href = "/login";
+    }
+    throw new Error(err.response?.data?.message || "API request failed");
   }
-
-  const options: RequestInit = {
-    method,
-    headers,
-  };
-
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-
-  if (response.status === 401) {
-    removeAuthToken();
-    window.location.href = "/login";
-  }
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || "API request failed");
-  }
-
-  return response.json();
 }
 
 // ==================== AUTHENTICATION ====================
 
 export const AuthService = {
   async login(email: string, password: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    const data = await response.json();
-    setAuthToken(data.token);
-    return data.user;
+    const resp = await api.post(`/auth/login`, { email, password });
+    setAuthToken(resp.data?.token ?? resp.token ?? "");
+    return resp.data?.user ?? resp.user ?? resp;
   },
 
   async register(
@@ -82,24 +59,14 @@ export const AuthService = {
     password: string,
     passwordConfirmation: string,
   ) {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        password_confirmation: passwordConfirmation,
-      }),
+    const resp = await api.post(`/auth/register`, {
+      name,
+      email,
+      password,
+      password_confirmation: passwordConfirmation,
     });
-
-    if (!response.ok) {
-      throw new Error("Registration failed");
-    }
-
-    const data = await response.json();
-    setAuthToken(data.token);
-    return data.user;
+    setAuthToken(resp.data?.token ?? resp.token ?? "");
+    return resp.data?.user ?? resp.user ?? resp;
   },
 
   async logout() {
@@ -166,22 +133,17 @@ export const ImageService = {
     }
 
     const token = getAuthToken();
-    const headers: HeadersInit = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
+
+    try {
+      const resp = await api.post("/images", formData, {
+        headers: token
+          ? { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" }
+          : { "Content-Type": "multipart/form-data" },
+      });
+      return resp.data;
+    } catch (err: any) {
+      throw new Error(err.response?.data?.message || "Image upload failed");
     }
-
-    const response = await fetch(`${API_BASE_URL}/images`, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Image upload failed");
-    }
-
-    return response.json();
   },
 
   async deleteImage(imageId: string) {
@@ -198,22 +160,13 @@ export const PdfService = {
       throw new Error("Not authenticated");
     }
 
-    const response = await fetch(
-      `${API_BASE_URL}/tables/${tableId}/export-pdf`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/pdf",
-        },
-      },
-    );
+    try {
+      const resp = await api.get(`/tables/${tableId}/export-pdf`, {
+        responseType: "blob",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/pdf" },
+      });
 
-    if (!response.ok) {
-      throw new Error("PDF export failed");
-    }
-
-    const blob = await response.blob();
+      const blob = resp.data as Blob;
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;

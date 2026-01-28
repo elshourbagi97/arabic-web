@@ -54,7 +54,7 @@ cd backend
 php artisan serve
 ```
 
-You'll see: `Server running on [http://127.0.0.1:8000]`
+You'll see: `Server running on [/api]`
 
 ### Step 5: Start the Frontend
 

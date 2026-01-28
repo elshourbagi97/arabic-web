@@ -1,4 +1,5 @@
-import axios, { AxiosInstance } from "axios";
+import type { AxiosInstance } from "axios";
+import api from "@/lib/axios";
 
 /**
  * API Service for communicating with Laravel Backend
@@ -7,20 +8,11 @@ import axios, { AxiosInstance } from "axios";
 
 class ApiService {
   private api: AxiosInstance;
-  private baseURL = "https://cheerier-zina-snappable.ngrok-free.dev/api";
   private token: string | null = null;
 
   constructor() {
-    // Initialize axios instance
-    // Ensure global axios default uses the provided backend URL
-    axios.defaults.baseURL = this.baseURL;
-
-    this.api = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    // Use centralized axios instance
+    this.api = api;
 
     // Load token from localStorage if exists
     this.token = localStorage.getItem("auth_token");
@@ -40,35 +32,11 @@ class ApiService {
     );
 
     // Response interceptor
-    // NOTE: do NOT call `this.logout()` here because `logout()` issues
-    // an API request which may itself receive a 401 and trigger recursion.
-    // Instead just clear local auth state when a 401 is seen.
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          // Log failing request information for debugging (non-sensitive)
-          try {
-            // Keep the log concise and avoid dumping headers or tokens
-            // which may contain sensitive information.
-            // eslint-disable-next-line no-console
-            console.warn("[apiService] 401 response for:", {
-              url: error.config?.url,
-              method: error.config?.method,
-              status: error.response?.status,
-              data: error.response?.data,
-            });
-          } catch (e) {
-            // ignore logging errors
-          }
-
-          this.token = null;
-          try {
-            localStorage.removeItem("auth_token");
-            delete this.api.defaults.headers.common["Authorization"];
-          } catch (e) {
-            // ignore
-          }
+          this.logout();
         }
         return Promise.reject(error);
       },
@@ -141,80 +109,15 @@ class ApiService {
     return response.data;
   }
 
-  // Section Methods
+  // Section methods
   async getSections() {
-    try {
-      const headers: any = { Accept: "application/json" };
-      if (this.token) headers.Authorization = `Bearer ${this.token}`;
-
-      const response = await this.api.get("/sections", {
-        // Ensure the server returns JSON and no request body is sent
-        headers,
-      });
-      return response.data;
-    } catch (error: any) {
-      // Provide clear logging for 422 Unprocessable Entity responses
-      if (error.response) {
-        const status = error.response.status;
-        const respData = error.response.data;
-        if (status === 422) {
-          // eslint-disable-next-line no-console
-          console.error("[apiService] GET /sections returned 422:", {
-            url: "/sections",
-            status,
-            data: respData,
-            message: error.message,
-          });
-        } else {
-          // eslint-disable-next-line no-console
-          console.warn("[apiService] GET /sections failed:", {
-            url: "/sections",
-            status,
-            data: respData,
-            message: error.message,
-          });
-        }
-      } else {
-        // Network / unknown error
-        // eslint-disable-next-line no-console
-        console.error(
-          "[apiService] Network error while fetching /sections:",
-          error,
-        );
-      }
-      throw error;
-    }
+    const response = await this.api.get("/sections");
+    return response.data;
   }
 
   async createSection(name: string) {
-    try {
-      const response = await this.api.post("/sections", { name });
-      return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
-        const data = error.response.data;
-        if (status === 422) {
-          const message =
-            data?.message ||
-            (data?.errors && Object.values(data.errors).flat()[0]) ||
-            "بيانات غير صحيحة لإنشاء القسم";
-          // eslint-disable-next-line no-console
-          console.error("[apiService] POST /sections 422:", { status, data });
-          throw new Error(message);
-        }
-        // other non-422 errors: surface server message if present
-        const otherMessage =
-          data?.message || error.message || "فشل إنشاء القسم";
-        // eslint-disable-next-line no-console
-        console.warn("[apiService] POST /sections failed:", { status, data });
-        throw new Error(otherMessage);
-      }
-      // Network or unknown
-      // eslint-disable-next-line no-console
-      console.error("[apiService] Network error on POST /sections:", error);
-      throw error;
-    }
+    const response = await this.api.post("/sections", { name });
+    return response.data;
   }
 
   async getTable(id: number) {

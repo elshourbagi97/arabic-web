@@ -1,5 +1,8 @@
 <?php
-
+if (file_exists(__DIR__ . '/index.html')) {
+    readfile(__DIR__ . '/index.html');
+    exit;
+}
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
