@@ -24,7 +24,7 @@ RUN php artisan key:generate
 
 # Set default environment variables
 ENV DB_CONNECTION=mysql
-ENV DB_HOST=${{RAILWAY_PRIVATE_DOMAIN}}
+ENV DB_HOST="mysql://root:vHFzsyGAueEHcvXTSVbgqDgCDhQENOIU@arabic-web.railway.internal:3306/railway"
 ENV DB_PORT=3306
 ENV DB_DATABASE=railway
 ENV DB_USERNAME=root
