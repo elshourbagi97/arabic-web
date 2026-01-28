@@ -7,14 +7,10 @@ return [
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 
     // Exact domains (production)
-    'allowed_origins' => [
-        'https://brilliant-kleicha-595a66.netlify.app',
-    ],
+    // Allow all origins
+    'allowed_origins' => ['*'],
 
-    // Any localhost port (development)
-    'allowed_origins_patterns' => [
-        '/^http:\/\/localhost:\d+$/',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
