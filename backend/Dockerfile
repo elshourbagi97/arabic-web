@@ -24,13 +24,13 @@ RUN php artisan key:generate
 
 # Set default environment variables
 ENV DB_CONNECTION=mysql
-ENV DB_HOST=db
+ENV DB_HOST=${{RAILWAY_PRIVATE_DOMAIN}}
 ENV DB_PORT=3306
-ENV DB_DATABASE=arabicwebsite_db
+ENV DB_DATABASE=railway
 ENV DB_USERNAME=root
-ENV DB_PASSWORD=root
-ENV APP_ENV=local
-ENV APP_DEBUG=true
+ENV DB_PASSWORD=vHFzsyGAueEHcvXTSVbgqDgCDhQENOIU
+ENV APP_ENV=production
+ENV APP_DEBUG=false
 
 # Expose port
 EXPOSE 10000
