@@ -1,0 +1,4 @@
+dist/
+backend/.env
+backend/vendor/
+node_modules
