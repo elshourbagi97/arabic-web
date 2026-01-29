@@ -145,7 +145,7 @@ class PdfExportController extends Controller
     </style>
 </head>
 <body>
-    <h1>' . htmlspecialchars($this->reshapeArabic($table->label)) . '</h1>
+    <h1>' . htmlspecialchars($this->reshapeArabic((string)$table->label), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h1>
     <div class="subtitle">' . $this->reshapeArabic('تقرير تم تصديره من النظام') . '</div>
 
     <table>
@@ -155,7 +155,9 @@ class PdfExportController extends Controller
         
         if (!empty($table->column_headers)) {
             foreach ($table->column_headers as $h) {
-                $html .= '<th>' . htmlspecialchars($this->reshapeArabic($h)) . '</th>';
+                // Force string cast and UTF-8 encoding for safety
+                $safeHeader = htmlspecialchars($this->reshapeArabic((string)$h), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $html .= '<th>' . $safeHeader . '</th>';
             }
         }
         
@@ -172,7 +174,8 @@ class PdfExportController extends Controller
             
             for ($i = 0; $i < $maxCols; $i++) {
                 $val = $data[$i] ?? '';
-                $html .= '<td>' . htmlspecialchars($this->reshapeArabic($val)) . '</td>';
+                $safeVal = htmlspecialchars($this->reshapeArabic((string)$val), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $html .= '<td>' . $safeVal . '</td>';
             }
             $html .= '</tr>';
         }
