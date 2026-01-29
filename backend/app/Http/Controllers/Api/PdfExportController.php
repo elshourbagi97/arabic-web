@@ -12,60 +12,61 @@ class PdfExportController extends Controller
 {
     public function exportTable(Request $request, Table $table)
     {
-        // Check authorization
+        // 1. Authorization
         if ($table->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         try {
-            // Load table with relations
+            // 2. Setup Environment for Arabic/UTF-8
+            mb_internal_encoding("UTF-8");
+            mb_http_output("UTF-8");
+            
+            // Load table data
             $table = $table->load('rows', 'notes');
 
-            // If a Node PDF service is configured, proxy to it (preferred for better RTL/Arabic rendering)
-            $pdfService = env('PDF_SERVICE_URL');
-            if (!empty($pdfService)) {
-                // ... (proxy logic kept same, omitted for brevity if not changing) ...
-            }
-
-            // Create HTML for PDF with Arabic support
+            // 3. Generate HTML Content
             $html = $this->generateTableHTML($table);
 
-            // Generate PDF using direct DomPDF class to ensure fresh instance
-            
-            // Ensure font directory exists
-            if (!file_exists(storage_path('fonts'))) {
-                mkdir(storage_path('fonts'), 0755, true);
+            // 4. Configure DomPDF
+            // We use a specific cache directory to prevent file locking issues
+            $cacheDir = storage_path('framework/cache/dompdf');
+            if (!file_exists($cacheDir)) {
+                @mkdir($cacheDir, 0755, true);
             }
 
             $options = new Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isHtml5ParserEnabled', true);
-            // Disable subsetting to see if caching/corruption is the culprit
-            $options->set('isFontSubsettingEnabled', false); 
+            $options->set('isFontSubsettingEnabled', false); // Disable to avoid cache corruption on repeated requests
             $options->set('defaultFont', 'DejaVu Sans');
-            $options->set('fontDir', storage_path('fonts'));
-            $options->set('fontCache', storage_path('fonts'));
+            $options->set('fontDir', $cacheDir); 
+            $options->set('fontCache', $cacheDir);
+            $options->set('tempDir', $cacheDir);
+            $options->set('chroot', realpath(base_path()));
 
+            // 5. Instantiate & Render
             $dompdf = new Dompdf($options);
             $dompdf->setPaper('a4', 'landscape');
-            // Do not add BOM, rely on <meta charset="utf-8">
-            $dompdf->loadHtml($html, 'UTF-8');
             
-            // Clear any potential output buffer content
+            // Clean any buffer garbage
             if (ob_get_length()) ob_end_clean();
             
+            $dompdf->loadHtml($html, 'UTF-8');
             $dompdf->render();
 
-            // Get raw content
+            // 6. Return Response with No-Cache Headers
             $content = $dompdf->output();
 
             return response($content)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $table->label . '.pdf"')
+                ->header('Content-Disposition', 'attachment; filename="' . $this->sanitizeFilename($table->label) . '.pdf"')
                 ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-                ->header('Pragma', 'no-cache');
+                ->header('Pragma', 'no-cache')
+                ->header('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
 
         } catch (\Exception $e) {
+            \Log::error("PDF Export Error: " . $e->getMessage());
             return response()->json([
                 'message' => 'Error generating PDF',
                 'error' => $e->getMessage(),
@@ -73,161 +74,121 @@ class PdfExportController extends Controller
         }
     }
 
+    private function sanitizeFilename($filename)
+    {
+        // Remove special chars that might break the header, keep Arabic
+        return preg_replace('/[^\p{L}\p{N}_\- ]/u', '', $filename);
+    }
+
     private function reshapeArabic($text)
     {
         if (!$text) return $text;
-        
-        // Check for ArPHP library (khaled.alshamaa/ar-php)
         if (class_exists('ArPHP\I18N\Arabic')) {
             $arabic = new \ArPHP\I18N\Arabic('Glyphs');
             return $arabic->utf8Glyphs($text);
         }
-        
         return $text;
     }
 
     private function generateTableHTML(Table $table)
     {
-        // Prefer a shipped Arabic TTF in public/fonts (e.g. NotoNaskhArabic-Regular.ttf)
-        $fontUrl = asset('fonts/NotoNaskhArabic-Regular.ttf');
-
+        // We use DejaVu Sans which is built-in to DomPDF 2.x+, no need for external font file references usually.
+        // But if needed, we define the font-family stack.
+        
         $html = '<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    <title>' . htmlspecialchars($table->label) . '</title>
+    <style>
+        * { box-sizing: border-box; }
         body {
             font-family: "DejaVu Sans", sans-serif;
             direction: rtl;
-            color: #222;
-            padding: 18px;
-            background: #fff;
+            text-align: right;
+            padding: 20px;
+            font-size: 12pt;
         }
-
-        .header { text-align: center; margin-bottom: 18px; padding-bottom: 8px; }
-        .header h1 { font-size: 18pt; font-weight: 700; color: #222; margin-bottom: 4px; }
-        .header p { font-size: 11pt; color: #666; }
-
-        table { width: 100%; border-collapse: collapse; margin-bottom: 14px; table-layout: fixed; }
-        table caption { caption-side: top; text-align: center; font-size: 16pt; font-weight: 700; padding: 6px 0; }
-
-        table thead th { background: #f5f5f5; border: 1px solid #e6e6e6; padding: 10px 8px; text-align: center; vertical-align: middle; font-weight: 700; }
-        table tbody td { border: 1px solid #ececec; padding: 10px 8px; text-align: center; vertical-align: middle; height: 52px; white-space: normal; word-break: break-word; line-height: 1.4; }
-        table tbody tr:nth-child(even) { background: #fbfbfb; }
-
+        h1 { text-align: center; color: #333; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
         
-        .notes-section {
-            margin-top: 30px;
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 8px; 
+            text-align: center; 
+            vertical-align: middle;
+        }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .notes-box {
+            background: #fafffa;
+            border: 1px solid #e0e0e0;
             padding: 15px;
-            background-color: #f5f5f5;
-            border-right: 4px solid #2c5aa0;
-            border-radius: 4px;
-        }
-        
-        .notes-section h3 {
-            color: #2c5aa0;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        
-        .notes-section p {
-            color: #333;
-            font-size: 12px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-        }
-        
-        .export-date {
+            border-radius: 5px;
             margin-top: 20px;
-            text-align: center;
-            font-size: 11px;
-            color: #999;
+        }
+        .notes-title { font-weight: bold; color: #2e7d32; margin-bottom: 5px; }
+        .footer { 
+            margin-top: 50px; 
+            text-align: center; 
+            font-size: 9pt; 
+            color: #999; 
+            border-top: 1px solid #eee;
+            padding-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>' . htmlspecialchars($this->reshapeArabic($table->label)) . '</h1>
-        <p>' . $this->reshapeArabic('تم تصدير من نظام الإدارة - Export from Management System') . '</p>
-    </div>
-    
+    <h1>' . htmlspecialchars($this->reshapeArabic($table->label)) . '</h1>
+    <div class="subtitle">' . $this->reshapeArabic('تقرير تم تصديره من النظام') . '</div>
+
     <table>
         <thead>
-            <tr>';
-
-        // Row number column (on the far right for RTL)
-        $html .= '<th>#</th>';
-
-        // Add column headers
-        if ($table->column_headers && is_array($table->column_headers)) {
-            foreach ($table->column_headers as $header) {
-                $html .= '<th>' . htmlspecialchars($this->reshapeArabic($header)) . '</th>';
+            <tr>
+                <th width="40" style="background-color: #eee;">#</th>';
+        
+        if (!empty($table->column_headers)) {
+            foreach ($table->column_headers as $h) {
+                $html .= '<th>' . htmlspecialchars($this->reshapeArabic($h)) . '</th>';
             }
         }
+        
+        $html .= '</tr></thead><tbody>';
 
-        $html .= '</tr>
-        </thead>
-        <tbody>';
-
-        // Add table rows with leading row-number column
-        for ($rIndex = 0; $rIndex < count($table->rows); $rIndex++) {
-            $row = $table->rows[$rIndex];
+        $rowIndex = 1;
+        foreach ($table->rows as $row) {
             $html .= '<tr>';
-            // Row number
-            $html .= '<td>' . ($rIndex + 1) . '</td>';
-            if (isset($row->row_data) && is_array($row->row_data)) {
-                foreach ($row->row_data as $cell) {
-                    $html .= '<td>' . htmlspecialchars($this->reshapeArabic($cell ?? '')) . '</td>';
-                }
-            } else {
-                // fill empty columns if no row_data
-                if (is_array($table->column_headers)) {
-                    foreach ($table->column_headers as $h) {
-                        $html .= '<td></td>';
-                    }
-                }
+            $html .= '<td style="background-color: #f8f9fa;">' . $rowIndex++ . '</td>';
+            
+            // Ensure we match the number of columns in headers
+            $maxCols = !empty($table->column_headers) ? count($table->column_headers) : 0;
+            $data = $row->row_data ?? [];
+            
+            for ($i = 0; $i < $maxCols; $i++) {
+                $val = $data[$i] ?? '';
+                $html .= '<td>' . htmlspecialchars($this->reshapeArabic($val)) . '</td>';
             }
             $html .= '</tr>';
         }
-        
-        $html .= '</tbody>
-    </table>';
-        
-        // Add notes if available
+
+        $html .= '</tbody></table>';
+
         if (!empty($table->notes)) {
-            $html .= '
-    <div class="notes-section">
-        <h3>' . $this->reshapeArabic('ملاحظات') . '</h3>
-        <p>' . htmlspecialchars($this->reshapeArabic($table->notes)) . '</p>
-    </div>';
+            $html .= '<div class="notes-box">
+                <div class="notes-title">' . $this->reshapeArabic('الملاحظات') . '</div>
+                <div>' . nl2br(htmlspecialchars($this->reshapeArabic($table->notes))) . '</div>
+            </div>';
         }
-        
-        // Add footer
-        $html .= '
-    <div class="footer">
-        <p>© ' . date('Y') . ' - ' . $this->reshapeArabic('نظام إدارة البيانات') . '</p>
-    </div>
-    
-    <div class="export-date">
-        <p>' . $this->reshapeArabic('تاريخ التصدير:') . ' ' . date('Y-m-d H:i:s') . '</p>
-    </div>
+
+        $html .= '<div class="footer">
+            ' . $this->reshapeArabic('تاريخ التصدير') . ': ' . date('Y-m-d H:i') . '
+        </div>
 </body>
 </html>';
-        
+
         return $html;
     }
 }
