@@ -20,7 +20,8 @@ class PdfExportController extends Controller
         try {
             // 2. Setup Environment for Arabic/UTF-8
             mb_internal_encoding("UTF-8");
-            mb_http_output("UTF-8");
+            // Ensure we don't transform binary PDF data as if it were text
+            mb_http_output("pass");
             
             // Load table data
             $table = $table->load('rows', 'notes');
@@ -49,8 +50,10 @@ class PdfExportController extends Controller
             $dompdf = new Dompdf($options);
             $dompdf->setPaper('a4', 'landscape');
             
-            // Clean any buffer garbage
-            if (ob_get_length()) ob_end_clean();
+            // Clean any buffer garbage totally
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
             
             $dompdf->loadHtml($html, 'UTF-8');
             $dompdf->render();
@@ -60,7 +63,7 @@ class PdfExportController extends Controller
 
             return response($content)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'attachment; filename="' . $this->sanitizeFilename($table->label) . '.pdf"')
+                ->header('Content-Disposition', "attachment; filename*=UTF-8''" . rawurlencode($this->sanitizeFilename($table->label)) . ".pdf")
                 ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
                 ->header('Pragma', 'no-cache')
                 ->header('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
