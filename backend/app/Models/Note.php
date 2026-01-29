@@ -12,12 +12,12 @@ class Note extends Model
     protected $table = 'notes';
 
     protected $fillable = [
-        'table_id',
+        'table_name',
         'content',
     ];
 
-    public function table()
-    {
-        return $this->belongsTo(Table::class, 'table_id');
-    }
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 }

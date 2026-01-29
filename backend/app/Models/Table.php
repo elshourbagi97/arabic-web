@@ -14,6 +14,8 @@ class Table extends Model
     protected $fillable = [
         'user_id',
         'label',
+        'table_name',
+        'name',
         'section',
         'data',
         'column_headers',

@@ -6,6 +6,9 @@ use App\Models\Table;
 use App\Models\TableRow;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class TableController extends Controller
 {
@@ -148,6 +151,118 @@ class TableController extends Controller
         $table->delete();
 
         return response()->json(['message' => 'Table deleted successfully']);
+    }
+
+    /**
+     * Rename a table (update its label)
+     */
+    public function renameTable(Request $request, Table $table)
+    {
+        if ($table->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
+            return response()->json(['message' => 'غير مصرح', 'error' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'table_name' => 'required|string|max:255',
+            'table_data' => 'nullable|array',
+        ]);
+
+        // Use transaction for data integrity
+        try {
+            \DB::beginTransaction();
+
+            $update = ['label' => $validated['table_name']];
+            // If DB has a dedicated `table_name` column, update it as well
+            if (Schema::hasColumn($table->getTable(), 'table_name')) {
+                $update['table_name'] = $validated['table_name'];
+            }
+            if (array_key_exists('table_data', $validated) && $validated['table_data'] !== null) {
+                $update['data'] = $validated['table_data'];
+            }
+            $update['last_updated'] = now();
+
+            $table->update($update);
+
+            \DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث اسم الجدول بنجاح',
+                'data' => $table->fresh()->load('rows')
+            ], 200);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحديث الجدول',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Alias method named `rename` to match route handler expectation.
+     * Delegates to renameTable for actual work.
+     */
+    public function rename(Request $request, Table $table)
+    {
+        // Validate input and return 422 on validation errors
+        try {
+            $validated = $request->validate([
+                'table_name' => 'required|string|max:255',
+                'table_data' => 'sometimes|array',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        // Determine which column to update: prefer `name`, then `table_name`, then `label`
+        $tableNameCol = null;
+        if (Schema::hasColumn($table->getTable(), 'name')) {
+            $tableNameCol = 'name';
+        } elseif (Schema::hasColumn($table->getTable(), 'table_name')) {
+            $tableNameCol = 'table_name';
+        } elseif (Schema::hasColumn($table->getTable(), 'label')) {
+            $tableNameCol = 'label';
+        }
+
+        if (!$tableNameCol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No suitable name column found on tables table',
+            ], 500);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $update = [ $tableNameCol => $validated['table_name'] ];
+            if (array_key_exists('table_data', $validated) && $validated['table_data'] !== null) {
+                $update['data'] = $validated['table_data'];
+            }
+            $update['last_updated'] = now();
+
+            $table->update($update);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحديث اسم الجدول بنجاح',
+                'data' => $table->fresh()->load('rows'),
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحديث الجدول',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function addRow(Request $request, Table $table)
