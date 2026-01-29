@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PdfExportController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\NotesController;
+use App\Http\Controllers\Api\DebugController;
 
 Route::middleware('cors')->group(function () {
 
@@ -33,6 +34,8 @@ Route::middleware('cors')->group(function () {
         Route::get('/tables/{table}', [TableController::class, 'show']);
         Route::put('/tables/{table}', [TableController::class, 'update']);
         Route::delete('/tables/{table}', [TableController::class, 'destroy']);
+        Route::get('/tables/{table}/export-pdf', [PdfExportController::class, 'exportTable']);
+        Route::get('/tables/{table}/debug-encoding', [DebugController::class, 'checkEncoding']);
 
         // Table rows
         Route::post('/tables/{table}/rows', [TableController::class, 'addRow']);
