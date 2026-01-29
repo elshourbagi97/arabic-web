@@ -25,6 +25,24 @@ export function NotesTextarea({
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [fetchedNotes, setFetchedNotes] = useState<any[]>([]);
+
+  const fetchNotes = async () => {
+    if (!tableName) return;
+    try {
+      const response = await apiService.getNotesByTable(tableName);
+      // The API returns { success: true, data: [...] }
+      if (response && response.data) {
+        setFetchedNotes(response.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch notes", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchNotes();
+  }, [tableName]);
 
   const handleSave = async () => {
     if (!value.trim()) {
@@ -49,6 +67,9 @@ export function NotesTextarea({
 
       setSaveMessage({ type: "success", text: "تم حفظ الملاحظة بنجاح" });
       onChange?.("");
+
+      // Refresh the notes list
+      await fetchNotes();
 
       // Clear success message after 3 seconds
       setTimeout(() => setSaveMessage(null), 3000);
@@ -86,11 +107,10 @@ export function NotesTextarea({
       {/* Save Message */}
       {saveMessage && (
         <div
-          className={`mt-2 p-3 rounded text-center ${
-            saveMessage.type === "success"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`mt-2 p-3 rounded text-center ${saveMessage.type === "success"
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
           {saveMessage.text}
         </div>
@@ -107,6 +127,31 @@ export function NotesTextarea({
         >
           {isSaving ? "جاري الحفظ..." : "حفظ الملاحظة"}
         </button>
+      )}
+
+      {/* Display Saved Notes */}
+      {fetchedNotes.length > 0 && (
+        <div className="mt-8 border-t border-[var(--light-gray)] pt-6">
+          <h3 className="text-lg font-semibold mb-4 text-[var(--text-dark)] text-right">
+            الملاحظات المحفوظة
+          </h3>
+          <div className="space-y-4">
+            {fetchedNotes.map((note) => (
+              <div
+                key={note.id}
+                className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                dir="rtl"
+              >
+                <div className="text-[var(--text-dark)] mb-2 whitespace-pre-wrap text-right">
+                  {note.content}
+                </div>
+                <div className="text-xs text-gray-500 text-left" dir="ltr">
+                  {new Date(note.created_at).toLocaleString("ar-SA")}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

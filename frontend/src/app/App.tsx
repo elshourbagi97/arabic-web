@@ -209,9 +209,9 @@ function App() {
           try {
             setSectionError(
               error.response.data?.message ||
-                (typeof error.response.data === "string"
-                  ? error.response.data
-                  : "خطأ في بيانات الأقسام"),
+              (typeof error.response.data === "string"
+                ? error.response.data
+                : "خطأ في بيانات الأقسام"),
             );
           } catch (setErr) {
             // ignore
@@ -433,22 +433,22 @@ function App() {
             const mapped = [
               ...(created
                 ? [
-                    {
-                      id: String(created.id),
-                      label: created.label || newLabel,
-                      data:
-                        created.data ||
-                        Array(12)
-                          .fill(null)
-                          .map(() => Array(20).fill("")),
-                      columnHeaders:
-                        created.column_headers || Array(20).fill(""),
-                      notes: created.notes || "",
-                      section: created.section || category,
-                      lastUpdated:
-                        created.last_updated || created.updated_at || null,
-                    },
-                  ]
+                  {
+                    id: String(created.id),
+                    label: created.label || newLabel,
+                    data:
+                      created.data ||
+                      Array(12)
+                        .fill(null)
+                        .map(() => Array(20).fill("")),
+                    columnHeaders:
+                      created.column_headers || Array(20).fill(""),
+                    notes: created.notes || "",
+                    section: created.section || category,
+                    lastUpdated:
+                      created.last_updated || created.updated_at || null,
+                  },
+                ]
                 : []),
             ];
             return {
@@ -1241,30 +1241,11 @@ function App() {
 
         {/* Notes-only Section */}
         {activeSection === "notes" && (
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3
-              className="mb-4"
-              style={{
-                fontSize: "var(--font-size-md)",
-                fontWeight: 600,
-                color: "var(--text-dark)",
-              }}
-            >
-              ملاحظات عامة
-            </h3>
-            <NotesTextarea
-              value={generalNotes}
-              onChange={(v) => setGeneralNotes(v)}
-              tableName="ملاحظات عامة"
-              placeholder="أدخل الملاحظات العامة هنا..."
-              showSaveButton={true}
-            />
-            <div className="mt-6">
-              <SecondaryButton onClick={handleAutoSave}>
-                حفظ الملاحظات
-              </SecondaryButton>
-            </div>
-          </div>
+          <GeneralNotes
+            value={generalNotes}
+            onChange={setGeneralNotes}
+            onSave={handleAutoSave}
+          />
         )}
 
         {/* Initial State Message */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import apiService from "../../services/apiService";
+import { NotesTextarea } from "./NotesTextarea";
 
 interface Note {
   id: number;
@@ -13,7 +14,13 @@ interface GroupedNotes {
   notes: Note[];
 }
 
-export function GeneralNotes() {
+interface GeneralNotesProps {
+  value?: string;
+  onChange?: (value: string) => void;
+  onSave?: () => Promise<void>;
+}
+
+export function GeneralNotes({ value, onChange, onSave }: GeneralNotesProps) {
   const [groupedNotes, setGroupedNotes] = useState<GroupedNotes[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,110 +75,107 @@ export function GeneralNotes() {
     });
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--primary-blue)] mx-auto"></div>
-          <p className="mt-4 text-[var(--text-dark)]">
-            جاري تحميل الملاحظات...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <p className="text-red-700 text-center">{error}</p>
-        <button
-          onClick={loadAllNotes}
-          className="mt-4 mx-auto block px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-        >
-          إعادة محاولة
-        </button>
-      </div>
-    );
-  }
-
-  if (groupedNotes.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-[var(--text-medium)] text-lg">
-          لا توجد ملاحظات حالياً
-        </p>
-      </div>
-    );
-  }
+  const otherNotes = groupedNotes.filter(
+    (g) => g.table_name !== "ملاحظات عامة"
+  );
 
   return (
     <div className="w-full space-y-8" dir="rtl">
-      <button
-        onClick={loadAllNotes}
-        className="px-4 py-2 bg-[var(--primary-blue)] text-white rounded hover:opacity-90 transition"
-      >
-        تحديث الملاحظات
-      </button>
-
-      {groupedNotes.map((group, groupIndex) => (
-        <div
-          key={groupIndex}
-          className="border-t border-[var(--light-gray)] pt-6"
+      {/* Input Section for General Notes */}
+      <div className="bg-white p-6 rounded-lg shadow-sm">
+        <h3
+          className="mb-4"
+          style={{
+            fontSize: "var(--font-size-md)",
+            fontWeight: 600,
+            color: "var(--text-dark)",
+          }}
         >
-          {/* Table Name Header */}
-          <h3
-            className="text-xl font-bold mb-6"
-            style={{ color: "var(--text-dark)" }}
-          >
-            {group.table_name}
-          </h3>
-
-          {/* Notes List */}
-          <div className="space-y-4">
-            {group.notes.map((note, noteIndex) => (
-              <div
-                key={noteIndex}
-                className="bg-white border border-[var(--light-gray)] rounded-lg p-6 hover:shadow-md transition"
-              >
-                {/* Note Content */}
-                <p
-                  className="whitespace-pre-wrap mb-4"
-                  style={{
-                    color: "var(--text-dark)",
-                    fontSize: "var(--font-size-md)",
-                  }}
-                >
-                  {note.content}
-                </p>
-
-                {/* Metadata and Actions */}
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-4 text-sm text-[var(--text-medium)]">
-                    <span>
-                      <strong>تاريخ الإنشاء:</strong>{" "}
-                      {formatDateTime(note.created_at)}
-                    </span>
-                    {note.updated_at !== note.created_at && (
-                      <span>
-                        <strong>آخر تحديث:</strong>{" "}
-                        {formatDateTime(note.updated_at)}
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => handleDeleteNote(note.id)}
-                    className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                  >
-                    حذف
-                  </button>
-                </div>
-              </div>
-            ))}
+          ملاحظات عامة
+        </h3>
+        <NotesTextarea
+          value={value}
+          onChange={onChange}
+          tableName="ملاحظات عامة"
+          placeholder="أدخل الملاحظات العامة هنا..."
+          showSaveButton={true}
+        />
+        {onSave && (
+          <div className="mt-6">
+            <button
+              onClick={onSave}
+              className="px-4 py-2 bg-[var(--primary-blue)] text-white rounded hover:opacity-90 transition"
+            >
+              حفظ الملاحظات (تحديث كمسودة)
+            </button>
           </div>
+        )}
+      </div>
+
+      {/* Summary of Other Tables */}
+      {otherNotes.length > 0 && (
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3
+              className="text-xl font-bold"
+              style={{ color: "var(--text-dark)" }}
+            >
+              ملخص ملاحظات الجداول الأخرى
+            </h3>
+            <button
+              onClick={loadAllNotes}
+              className="px-4 py-2 bg-[var(--light-blue)] text-[var(--primary-blue)] rounded hover:bg-blue-100 transition text-sm"
+            >
+              تحديث الملخص
+            </button>
+          </div>
+
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-blue)] mx-auto"></div>
+              <p className="mt-2 text-sm text-[var(--text-medium)]">
+                جاري التحميل...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              {otherNotes.map((group, groupIndex) => (
+                <div
+                  key={groupIndex}
+                  className="border-t border-[var(--light-gray)] pt-6 first:border-0 first:pt-0"
+                >
+                  <h4
+                    className="font-semibold mb-4 text-[var(--text-medium)]"
+                  >
+                    {group.table_name}
+                  </h4>
+                  <div className="space-y-4">
+                    {group.notes.map((note, noteIndex) => (
+                      <div
+                        key={noteIndex}
+                        className="bg-gray-50 border border-[var(--light-gray)] rounded p-4"
+                      >
+                        <p className="whitespace-pre-wrap mb-2 text-[var(--text-dark)]">
+                          {note.content}
+                        </p>
+                        <div className="flex justify-between items-center text-xs text-[var(--text-medium)]">
+                          <span>{formatDateTime(note.created_at)}</span>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            حذف
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
+      )}
     </div>
   );
 }
