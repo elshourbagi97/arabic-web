@@ -69,15 +69,17 @@ class PdfExportController extends Controller
             // Create HTML for PDF with Arabic support
             $html = $this->generateTableHTML($table);
 
-            // Generate PDF using DomPDF as a fallback
-            /** @phpstan-ignore-next-line */
-            $pdf = Pdf::loadHTML($html)
-                ->setPaper('a4', 'landscape')
-                ->setOption('isRemoteEnabled', true)
-                ->setOption('dpi', 300);
+            // Generate PDF using DomPDF
+            // Add BOM to force UTF-8
+            $htmlWithBOM = "\xEF\xBB\xBF" . $html;
 
-            // Set Arabic font
-            $pdf->getDomPDF()->getOptions()->set('isHtml5ParserEnabled', true);
+            /** @phpstan-ignore-next-line */
+            $pdf = Pdf::setOption('isRemoteEnabled', true)
+                ->setOption('isHtml5ParserEnabled', true)
+                ->setOption('isFontSubsettingEnabled', true)
+                ->setOption('defaultFont', 'DejaVu Sans')
+                ->loadHTML($htmlWithBOM)
+                ->setPaper('a4', 'landscape');
 
             return $pdf->download($table->label . '.pdf');
         } catch (\Exception $e) {
