@@ -77,20 +77,22 @@ class PdfExportController extends Controller
         }
     }
 
-    private function sanitizeFilename($filename)
+    private function safeEncode($text)
     {
-        // Remove special chars that might break the header, keep Arabic
-        return preg_replace('/[^\p{L}\p{N}_\- ]/u', '', $filename);
-    }
+        if (!$text) return '';
+        $text = (string)$text;
 
-    private function reshapeArabic($text)
-    {
-        if (!$text) return $text;
+        // 1. Reshape Arabic if library exists
         if (class_exists('ArPHP\I18N\Arabic')) {
             $arabic = new \ArPHP\I18N\Arabic('Glyphs');
-            return $arabic->utf8Glyphs($text);
+            // utf8Glyphs returns UTF-8 characters that are reshaped
+            $text = $arabic->utf8Glyphs($text);
         }
-        return $text;
+
+        // 2. Convert to HTML entities (hex) to ensure DomPDF renders them correctly
+        // independently of the assumed file encoding.
+        // using 'UTF-8' explicitly.
+        return mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8');
     }
 
     private function generateTableHTML(Table $table)
@@ -103,7 +105,7 @@ class PdfExportController extends Controller
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
-    <title>' . htmlspecialchars($table->label) . '</title>
+    <title>' . $this->safeEncode($table->label) . '</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -145,8 +147,8 @@ class PdfExportController extends Controller
     </style>
 </head>
 <body>
-    <h1>' . htmlspecialchars($this->reshapeArabic((string)$table->label), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</h1>
-    <div class="subtitle">' . $this->reshapeArabic('تقرير تم تصديره من النظام') . '</div>
+    <h1>' . $this->safeEncode($table->label) . '</h1>
+    <div class="subtitle">' . $this->safeEncode('تقرير تم تصديره من النظام') . '</div>
 
     <table>
         <thead>
@@ -155,9 +157,7 @@ class PdfExportController extends Controller
         
         if (!empty($table->column_headers)) {
             foreach ($table->column_headers as $h) {
-                // Force string cast and UTF-8 encoding for safety
-                $safeHeader = htmlspecialchars($this->reshapeArabic((string)$h), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $html .= '<th>' . $safeHeader . '</th>';
+                $html .= '<th>' . $this->safeEncode($h) . '</th>';
             }
         }
         
@@ -174,8 +174,7 @@ class PdfExportController extends Controller
             
             for ($i = 0; $i < $maxCols; $i++) {
                 $val = $data[$i] ?? '';
-                $safeVal = htmlspecialchars($this->reshapeArabic((string)$val), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $html .= '<td>' . $safeVal . '</td>';
+                $html .= '<td>' . $this->safeEncode($val) . '</td>';
             }
             $html .= '</tr>';
         }
@@ -184,13 +183,13 @@ class PdfExportController extends Controller
 
         if (!empty($table->notes)) {
             $html .= '<div class="notes-box">
-                <div class="notes-title">' . $this->reshapeArabic('الملاحظات') . '</div>
-                <div>' . nl2br(htmlspecialchars($this->reshapeArabic($table->notes))) . '</div>
+                <div class="notes-title">' . $this->safeEncode('الملاحظات') . '</div>
+                <div>' . nl2br($this->safeEncode($table->notes)) . '</div>
             </div>';
         }
 
         $html .= '<div class="footer">
-            ' . $this->reshapeArabic('تاريخ التصدير') . ': ' . date('Y-m-d H:i') . '
+            ' . $this->safeEncode('تاريخ التصدير') . ': ' . date('Y-m-d H:i') . '
         </div>
 </body>
 </html>';
