@@ -73,13 +73,18 @@ class PdfExportController extends Controller
             // Add BOM to force UTF-8
             $htmlWithBOM = "\xEF\xBB\xBF" . $html;
 
-            /** @phpstan-ignore-next-line */
-            $pdf = Pdf::setOption('isRemoteEnabled', true)
-                ->setOption('isHtml5ParserEnabled', true)
-                ->setOption('isFontSubsettingEnabled', true)
-                ->setOption('defaultFont', 'DejaVu Sans')
-                ->loadHTML($htmlWithBOM)
-                ->setPaper('a4', 'landscape');
+            /** @var \Barryvdh\DomPDF\PDF $pdf */
+            $pdf = app('dompdf.wrapper');
+            
+            // Set options on the underlying DomPDF class
+            $pdf->getDomPDF()->set_option('isRemoteEnabled', true);
+            $pdf->getDomPDF()->set_option('isHtml5ParserEnabled', true);
+            $pdf->getDomPDF()->set_option('isFontSubsettingEnabled', true);
+            $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+
+            // Explicitly pass encoding to loadHTML
+            $pdf->loadHTML($htmlWithBOM, 'UTF-8');
+            $pdf->setPaper('a4', 'landscape');
 
             return $pdf->download($table->label . '.pdf');
         } catch (\Exception $e) {
