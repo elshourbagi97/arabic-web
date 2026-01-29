@@ -35,8 +35,8 @@ class PdfExportController extends Controller
                 'format' => 'A4-L', // Landscape
                 'orientation' => 'L',
                 'tempDir' => $tempDir,
-                'autoScriptToLang' => true,
-                'autoLangToFont' => true,
+                // 'autoScriptToLang' => true, // Optional with explicit font
+                // 'autoLangToFont' => true,   // Disabled to force DejaVu Sans
             ]);
 
             // 4. Render
@@ -79,7 +79,7 @@ class PdfExportController extends Controller
     <title>' . htmlspecialchars($table->label) . '</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
             direction: rtl;
             text-align: right;
         }
@@ -92,7 +92,11 @@ class PdfExportController extends Controller
             padding: 8px; 
             text-align: center; 
         }
-        th { background-color: #f8f9fa; font-weight: bold; }
+        th { 
+            background-color: #f8f9fa; 
+            /* Disable bold to prevent font substitution issues with Arabic */
+            font-weight: normal; 
+        }
         tr:nth-child(even) { background-color: #f9f9f9; }
         
         .notes-box {
