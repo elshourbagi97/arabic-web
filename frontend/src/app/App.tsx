@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { GeneralNotes } from "./components/GeneralNotes";
 import { TopSelectionButton } from "./components/TopSelectionButton";
 import { TableContainer } from "./components/TableContainer";
 import { NotesTextarea } from "./components/NotesTextarea";
@@ -510,6 +511,49 @@ function App() {
         await apiService.deleteTable(Number(tableId));
       } catch (e) {
         console.error("Failed to delete table on server", e);
+      }
+    }
+  };
+
+  // Rename a table (update label)
+  const handleRenameTable = async (tableId: string, newName: string) => {
+    if (!currentUser) return;
+    const email = currentUser.email;
+
+    const userData = userTablesData[email];
+    const table = userData?.tables.find((t: any) => t.id === tableId);
+    if (!table) throw new Error("Table not found");
+
+    // Optimistic UI update
+    const previousTables = userData.tables;
+
+    setUserTablesData((prev) => ({
+      ...prev,
+      [email]: {
+        ...prev[email],
+        tables: prev[email].tables.map((t: any) =>
+          t.id === tableId ? { ...t, label: newName } : t,
+        ),
+      },
+    }));
+
+    // Persist to backend
+    if (!tableId.startsWith("table-")) {
+      try {
+        await apiService.updateTable(Number(tableId), {
+          label: newName,
+          data: table.data, // 👈 included as you wanted
+        });
+      } catch (e) {
+        // Rollback on error
+        setUserTablesData((prev) => ({
+          ...prev,
+          [email]: {
+            ...prev[email],
+            tables: previousTables,
+          },
+        }));
+        throw e;
       }
     }
   };
@@ -1115,6 +1159,7 @@ function App() {
                 activeTab={userData.activeTableId}
                 onTabChange={setActiveTableId}
                 onRemoveTab={handleRemoveTable}
+                onRenameTab={handleRenameTable}
                 canRemove={userData.tables.length > 1}
               />
 
@@ -1171,6 +1216,8 @@ function App() {
                   <NotesTextarea
                     value={activeTable.notes}
                     onChange={handleNotesChange}
+                    tableName={activeTable.label}
+                    showSaveButton={true}
                   />
                 )}
               </div>
@@ -1208,7 +1255,9 @@ function App() {
             <NotesTextarea
               value={generalNotes}
               onChange={(v) => setGeneralNotes(v)}
+              tableName="ملاحظات عامة"
               placeholder="أدخل الملاحظات العامة هنا..."
+              showSaveButton={true}
             />
             <div className="mt-6">
               <SecondaryButton onClick={handleAutoSave}>

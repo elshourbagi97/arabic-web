@@ -15,12 +15,14 @@ class ApiService {
     // Ensure global axios default uses the provided backend URL
     axios.defaults.baseURL = this.baseURL;
 
-    this.api = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+   this.api = axios.create({
+  baseURL: this.baseURL,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json", // ✅ هذا هو المفتاح
+  },
+});
+
 
     // Load token from localStorage if exists
     this.token = localStorage.getItem("auth_token");
@@ -247,9 +249,14 @@ class ApiService {
 
   async updateTable(
     id: number,
-    data: { label?: string; column_headers?: string[]; notes?: string },
+    payload: {
+      label?: string;
+      data?: any; // table.data (rows)
+      column_headers?: string[]; // table headers
+      notes?: string;
+    },
   ) {
-    const response = await this.api.put(`/tables/${id}`, data);
+    const response = await this.api.put(`/tables/${id}`, payload);
     return response.data;
   }
 
@@ -356,6 +363,35 @@ class ApiService {
 
   getToken(): string | null {
     return this.token;
+  }
+
+  // Notes Methods
+  async saveNote(tableName: string, content: string) {
+    const response = await this.api.post("/notes", {
+      table_name: tableName,
+      content,
+    });
+    return response.data;
+  }
+
+  async getAllNotes() {
+    const response = await this.api.get("/notes");
+    return response.data;
+  }
+
+  async getNotesByTable(tableName: string) {
+    const response = await this.api.get(`/notes/${tableName}`);
+    return response.data;
+  }
+
+  async updateNote(noteId: number, content: string) {
+    const response = await this.api.put(`/notes/${noteId}`, { content });
+    return response.data;
+  }
+
+  async deleteNote(noteId: number) {
+    const response = await this.api.delete(`/notes/${noteId}`);
+    return response.data;
   }
 }
 
