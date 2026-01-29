@@ -99,17 +99,10 @@ class PdfExportController extends Controller
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-        @font-face {
-            font-family: "NotoNaskhArabic";
-            src: url("' . $fontUrl . '") format("truetype");
-            font-weight: normal;
-            font-style: normal;
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: "NotoNaskhArabic", "Traditional Arabic", "Arial Unicode MS", "Arabic Typesetting", Arial, sans-serif;
+            font-family: "DejaVu Sans", sans-serif;
             direction: rtl;
             color: #222;
             padding: 18px;
