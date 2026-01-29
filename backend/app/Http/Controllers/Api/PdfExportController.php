@@ -40,7 +40,8 @@ class PdfExportController extends Controller
             $options = new Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isHtml5ParserEnabled', true);
-            $options->set('isFontSubsettingEnabled', true);
+            // Disable subsetting to see if caching/corruption is the culprit
+            $options->set('isFontSubsettingEnabled', false); 
             $options->set('defaultFont', 'DejaVu Sans');
             $options->set('fontDir', storage_path('fonts'));
             $options->set('fontCache', storage_path('fonts'));
@@ -50,14 +51,19 @@ class PdfExportController extends Controller
             // Do not add BOM, rely on <meta charset="utf-8">
             $dompdf->loadHtml($html, 'UTF-8');
             
-            // Clear any potential output buffer content (whitespace/warnings) to prevent corruption
+            // Clear any potential output buffer content
             if (ob_get_length()) ob_end_clean();
             
             $dompdf->render();
 
-            return $dompdf->stream($table->label . '.pdf', [
-                'Attachment' => true
-            ]);
+            // Get raw content
+            $content = $dompdf->output();
+
+            return response($content)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="' . $table->label . '.pdf"')
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+                ->header('Pragma', 'no-cache');
 
         } catch (\Exception $e) {
             return response()->json([
