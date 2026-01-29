@@ -31,21 +31,27 @@ class PdfExportController extends Controller
             $html = $this->generateTableHTML($table);
 
             // Generate PDF using direct DomPDF class to ensure fresh instance
-            // Add BOM to force UTF-8
-            $htmlWithBOM = "\xEF\xBB\xBF" . $html;
+            
+            // Ensure font directory exists
+            if (!file_exists(storage_path('fonts'))) {
+                mkdir(storage_path('fonts'), 0755, true);
+            }
 
             $options = new Options();
             $options->set('isRemoteEnabled', true);
             $options->set('isHtml5ParserEnabled', true);
             $options->set('isFontSubsettingEnabled', true);
             $options->set('defaultFont', 'DejaVu Sans');
-            // Ensure font cache is writable/temp
             $options->set('fontDir', storage_path('fonts'));
             $options->set('fontCache', storage_path('fonts'));
 
             $dompdf = new Dompdf($options);
             $dompdf->setPaper('a4', 'landscape');
-            $dompdf->loadHtml($htmlWithBOM, 'UTF-8');
+            // Do not add BOM, rely on <meta charset="utf-8">
+            $dompdf->loadHtml($html, 'UTF-8');
+            
+            // Clear any potential output buffer content (whitespace/warnings) to prevent corruption
+            if (ob_get_length()) ob_end_clean();
             
             $dompdf->render();
 
