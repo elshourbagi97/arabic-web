@@ -88,6 +88,19 @@ class PdfExportController extends Controller
         }
     }
 
+    private function reshapeArabic($text)
+    {
+        if (!$text) return $text;
+        
+        // Check for ArPHP library (khaled.alshamaa/ar-php)
+        if (class_exists('ArPHP\I18N\Arabic')) {
+            $arabic = new \ArPHP\I18N\Arabic('Glyphs');
+            return $arabic->utf8Glyphs($text);
+        }
+        
+        return $text;
+    }
+
     private function generateTableHTML(Table $table)
     {
         // Prefer a shipped Arabic TTF in public/fonts (e.g. NotoNaskhArabic-Regular.ttf)
@@ -96,6 +109,7 @@ class PdfExportController extends Controller
         $html = '<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
@@ -162,8 +176,8 @@ class PdfExportController extends Controller
 </head>
 <body>
     <div class="header">
-        <h1>' . htmlspecialchars($table->label) . '</h1>
-        <p>تم تصدير من نظام الإدارة - Export from Management System</p>
+        <h1>' . htmlspecialchars($this->reshapeArabic($table->label)) . '</h1>
+        <p>' . $this->reshapeArabic('تم تصدير من نظام الإدارة - Export from Management System') . '</p>
     </div>
     
     <table>
@@ -176,7 +190,7 @@ class PdfExportController extends Controller
         // Add column headers
         if ($table->column_headers && is_array($table->column_headers)) {
             foreach ($table->column_headers as $header) {
-                $html .= '<th>' . htmlspecialchars($header) . '</th>';
+                $html .= '<th>' . htmlspecialchars($this->reshapeArabic($header)) . '</th>';
             }
         }
 
@@ -192,7 +206,7 @@ class PdfExportController extends Controller
             $html .= '<td>' . ($rIndex + 1) . '</td>';
             if (isset($row->row_data) && is_array($row->row_data)) {
                 foreach ($row->row_data as $cell) {
-                    $html .= '<td>' . htmlspecialchars($cell ?? '') . '</td>';
+                    $html .= '<td>' . htmlspecialchars($this->reshapeArabic($cell ?? '')) . '</td>';
                 }
             } else {
                 // fill empty columns if no row_data
@@ -212,19 +226,19 @@ class PdfExportController extends Controller
         if (!empty($table->notes)) {
             $html .= '
     <div class="notes-section">
-        <h3>ملاحظات</h3>
-        <p>' . htmlspecialchars($table->notes) . '</p>
+        <h3>' . $this->reshapeArabic('ملاحظات') . '</h3>
+        <p>' . htmlspecialchars($this->reshapeArabic($table->notes)) . '</p>
     </div>';
         }
         
         // Add footer
         $html .= '
     <div class="footer">
-        <p>© ' . date('Y') . ' - نظام إدارة البيانات</p>
+        <p>© ' . date('Y') . ' - ' . $this->reshapeArabic('نظام إدارة البيانات') . '</p>
     </div>
     
     <div class="export-date">
-        <p>تاريخ التصدير: ' . date('Y-m-d H:i:s') . '</p>
+        <p>' . $this->reshapeArabic('تاريخ التصدير:') . ' ' . date('Y-m-d H:i:s') . '</p>
     </div>
 </body>
 </html>';
