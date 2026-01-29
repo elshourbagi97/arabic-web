@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use Mpdf\Mpdf;
 
 class PdfExportController extends Controller
 {
@@ -18,48 +17,34 @@ class PdfExportController extends Controller
         }
 
         try {
-            // 2. Setup Environment for Arabic/UTF-8
-            mb_internal_encoding("UTF-8");
-            // Ensure we don't transform binary PDF data as if it were text
-            mb_http_output("pass");
-            
             // Load table data
             $table = $table->load('rows', 'notes');
 
-            // 3. Generate HTML Content
+            // 2. Generate HTML Content
             $html = $this->generateTableHTML($table);
 
-            // 4. Configure DomPDF
-            // We use a specific cache directory to prevent file locking issues
-            $cacheDir = storage_path('framework/cache/dompdf');
-            if (!file_exists($cacheDir)) {
-                @mkdir($cacheDir, 0755, true);
+            // 3. Configure mPDF
+            // We use a specific temp directory to prevent permission issues
+            $tempDir = storage_path('framework/cache/mpdf');
+            if (!file_exists($tempDir)) {
+                @mkdir($tempDir, 0755, true);
             }
 
-            $options = new Options();
-            $options->set('isRemoteEnabled', true);
-            $options->set('isHtml5ParserEnabled', true);
-            $options->set('isFontSubsettingEnabled', false); // Disable to avoid cache corruption on repeated requests
-            $options->set('defaultFont', 'DejaVu Sans');
-            $options->set('fontDir', $cacheDir); 
-            $options->set('fontCache', $cacheDir);
-            $options->set('tempDir', $cacheDir);
-            $options->set('chroot', realpath(base_path()));
+            $mpdf = new Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'A4-L', // Landscape
+                'orientation' => 'L',
+                'tempDir' => $tempDir,
+                'autoScriptToLang' => true,
+                'autoLangToFont' => true,
+            ]);
 
-            // 5. Instantiate & Render
-            $dompdf = new Dompdf($options);
-            $dompdf->setPaper('a4', 'landscape');
-            
-            // Clean any buffer garbage totally
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-            
-            $dompdf->loadHtml($html, 'UTF-8');
-            $dompdf->render();
+            // 4. Render
+            $mpdf->WriteHTML($html);
 
-            // 6. Return Response with No-Cache Headers
-            $content = $dompdf->output();
+            // 5. Return Response
+            // 'S' returns the PDF as a string
+            $content = $mpdf->Output($this->sanitizeFilename($table->label) . '.pdf', 'S');
 
             return response($content)
                 ->header('Content-Type', 'application/pdf')
@@ -77,43 +62,26 @@ class PdfExportController extends Controller
         }
     }
 
-    private function safeEncode($text)
+    private function sanitizeFilename($filename)
     {
-        if (!$text) return '';
-        $text = (string)$text;
-
-        // 1. Reshape Arabic if library exists
-        if (class_exists('ArPHP\I18N\Arabic')) {
-            $arabic = new \ArPHP\I18N\Arabic('Glyphs');
-            // utf8Glyphs returns UTF-8 characters that are reshaped
-            $text = $arabic->utf8Glyphs($text);
-        }
-
-        // 2. Convert to HTML entities (hex) to ensure DomPDF renders them correctly
-        // independently of the assumed file encoding.
-        // using 'UTF-8' explicitly.
-        return mb_convert_encoding($text, 'HTML-ENTITIES', 'UTF-8');
+        // Remove special chars that might break the header, keep Arabic
+        return preg_replace('/[^\p{L}\p{N}_\- ]/u', '', $filename);
     }
 
     private function generateTableHTML(Table $table)
     {
-        // We use DejaVu Sans which is built-in to DomPDF 2.x+, no need for external font file references usually.
-        // But if needed, we define the font-family stack.
+        // mPDF handles styling well.
         
         $html = '<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="UTF-8">
-    <title>' . $this->safeEncode($table->label) . '</title>
+    <title>' . htmlspecialchars($table->label) . '</title>
     <style>
-        * { box-sizing: border-box; }
         body {
-            font-family: "DejaVu Sans", sans-serif;
+            font-family: sans-serif;
             direction: rtl;
             text-align: right;
-            padding: 20px;
-            font-size: 12pt;
         }
         h1 { text-align: center; color: #333; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
@@ -123,7 +91,6 @@ class PdfExportController extends Controller
             border: 1px solid #ddd; 
             padding: 8px; 
             text-align: center; 
-            vertical-align: middle;
         }
         th { background-color: #f8f9fa; font-weight: bold; }
         tr:nth-child(even) { background-color: #f9f9f9; }
@@ -147,8 +114,8 @@ class PdfExportController extends Controller
     </style>
 </head>
 <body>
-    <h1>' . $this->safeEncode($table->label) . '</h1>
-    <div class="subtitle">' . $this->safeEncode('تقرير تم تصديره من النظام') . '</div>
+    <h1>' . htmlspecialchars($table->label) . '</h1>
+    <div class="subtitle">تقرير تم تصديره من النظام</div>
 
     <table>
         <thead>
@@ -157,7 +124,7 @@ class PdfExportController extends Controller
         
         if (!empty($table->column_headers)) {
             foreach ($table->column_headers as $h) {
-                $html .= '<th>' . $this->safeEncode($h) . '</th>';
+                $html .= '<th>' . htmlspecialchars($h) . '</th>';
             }
         }
         
@@ -174,7 +141,7 @@ class PdfExportController extends Controller
             
             for ($i = 0; $i < $maxCols; $i++) {
                 $val = $data[$i] ?? '';
-                $html .= '<td>' . $this->safeEncode($val) . '</td>';
+                $html .= '<td>' . htmlspecialchars($val) . '</td>';
             }
             $html .= '</tr>';
         }
@@ -183,13 +150,13 @@ class PdfExportController extends Controller
 
         if (!empty($table->notes)) {
             $html .= '<div class="notes-box">
-                <div class="notes-title">' . $this->safeEncode('الملاحظات') . '</div>
-                <div>' . nl2br($this->safeEncode($table->notes)) . '</div>
+                <div class="notes-title">الملاحظات</div>
+                <div>' . nl2br(htmlspecialchars($table->notes)) . '</div>
             </div>';
         }
 
         $html .= '<div class="footer">
-            ' . $this->safeEncode('تاريخ التصدير') . ': ' . date('Y-m-d H:i') . '
+            تاريخ التصدير: ' . date('Y-m-d H:i') . '
         </div>
 </body>
 </html>';
