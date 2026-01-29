@@ -77,7 +77,7 @@ class PdfExportController extends Controller
 <html dir="rtl" lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>' . htmlspecialchars($table->label) . '</title>
+    <title>' . htmlspecialchars($table->label, ENT_QUOTES, 'UTF-8') . '</title>
     <style>
         body {
             font-family: 'aealarabiya', 'Arial', sans-serif;
@@ -119,7 +119,7 @@ class PdfExportController extends Controller
     </style>
 </head>
 <body>
-    <h1>' . htmlspecialchars($table->label) . '</h1>
+    <h1>' . htmlspecialchars($table->label, ENT_QUOTES, 'UTF-8') . '</h1>
     <div class="subtitle">تقرير تم تصديره من النظام</div>
 
     <table>
@@ -129,7 +129,7 @@ class PdfExportController extends Controller
         
         if (!empty($table->column_headers)) {
             foreach ($table->column_headers as $h) {
-                $html .= '<th>' . htmlspecialchars($h) . '</th>';
+                $html .= '<th>' . htmlspecialchars($h, ENT_QUOTES, 'UTF-8') . '</th>';
             }
         }
         
@@ -146,7 +146,7 @@ class PdfExportController extends Controller
             
             for ($i = 0; $i < $maxCols; $i++) {
                 $val = $data[$i] ?? '';
-                $html .= '<td>' . htmlspecialchars($val) . '</td>';
+                $html .= '<td>' . htmlspecialchars($val, ENT_QUOTES, 'UTF-8') . '</td>';
             }
             $html .= '</tr>';
         }
@@ -156,7 +156,7 @@ class PdfExportController extends Controller
         if (!empty($table->notes)) {
             $html .= '<div class="notes-box">
                 <div class="notes-title">الملاحظات</div>
-                <div>' . nl2br(htmlspecialchars($table->notes)) . '</div>
+                <div>' . nl2br(htmlspecialchars($table->notes, ENT_QUOTES, 'UTF-8')) . '</div>
             </div>';
         }
 
