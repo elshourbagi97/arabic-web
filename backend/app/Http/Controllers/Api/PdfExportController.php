@@ -40,6 +40,9 @@ class PdfExportController extends Controller
                 'default_font' => 'aealarabiya', // Arabic-compatible font
             ]);
 
+            // Ensure RTL directionality is forced
+            $mpdf->SetDirectionality('rtl');
+
             // 4. Render
             $mpdf->WriteHTML($html);
 
@@ -87,11 +90,11 @@ class PdfExportController extends Controller
         h1 { text-align: center; color: #333; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 10pt; margin-bottom: 20px; }
         
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; direction: rtl; }
         th, td { 
             border: 1px solid #ddd; 
             padding: 8px; 
-            text-align: center; 
+            text-align: right; 
         }
         th { 
             background-color: #f8f9fa; 
