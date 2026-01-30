@@ -132,7 +132,7 @@ class PdfExportController extends Controller
         
         if (!empty($table->column_headers)) {
             foreach ($table->column_headers as $h) {
-                $html .= '<th>' . htmlspecialchars($h, ENT_QUOTES, 'UTF-8') . '</th>';
+                $html .= '<td style="background-color:#f8f9fa; font-weight:normal;>' . htmlspecialchars($h, ENT_QUOTES, 'UTF-8') . '</td>';
             }
         }
         
