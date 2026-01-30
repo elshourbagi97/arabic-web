@@ -34,14 +34,13 @@ Route::middleware('cors')->group(function () {
         Route::get('/tables/{table}', [TableController::class, 'show']);
         Route::put('/tables/{table}', [TableController::class, 'update']);
         Route::delete('/tables/{table}', [TableController::class, 'destroy']);
-        Route::get('/tables/{table}/export-pdf', [PdfExportController::class, 'exportTable']);
-        Route::get('/tables/{table}/debug-encoding', [DebugController::class, 'checkEncoding']);
-
+        
+        
         // Table rows
         Route::post('/tables/{table}/rows', [TableController::class, 'addRow']);
         Route::put('/rows/{row}', [TableController::class, 'updateRow']);
         Route::delete('/rows/{row}', [TableController::class, 'deleteRow']);
-
+        
         // Images
         Route::get('/images', [ImageController::class, 'index']);
         Route::post('/images', [ImageController::class, 'store']);
@@ -56,7 +55,7 @@ Route::middleware('cors')->group(function () {
         Route::get('/notes/{table_name}', [NotesController::class, 'show']);
         Route::put('/notes/{id}', [NotesController::class, 'update']);
         Route::delete('/notes/{id}', [NotesController::class, 'destroy']);
-
+        
         // Admin
         Route::middleware('admin')->group(function () {
             Route::get('/admin/users', [AdminController::class, 'getAllUsers']);
@@ -64,5 +63,8 @@ Route::middleware('cors')->group(function () {
             Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
         });
 
+        });
+    // PDF Export
+    Route::get('/tables/{table}/export', [PdfExportController::class, 'exportTable']);
     });
-});
+    

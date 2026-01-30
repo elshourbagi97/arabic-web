@@ -566,6 +566,13 @@ class ComposerStaticInitc4ddc1f77a07ddda8d5838108ac6a1c4
                 0 => __DIR__ . '/..' . '/barryvdh/reflection-docblock/src',
             ),
         ),
+        'A' => 
+        array (
+            'Arphp' => 
+            array (
+                0 => __DIR__ . '/..' . '/ar-php/ar-php/src',
+            ),
+        ),
     );
 
     public static $classMap = array (

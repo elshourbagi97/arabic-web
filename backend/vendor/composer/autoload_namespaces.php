@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Barryvdh' => array($vendorDir . '/barryvdh/reflection-docblock/src'),
+    'Arphp' => array($vendorDir . '/ar-php/ar-php/src'),
 );

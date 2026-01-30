@@ -6,34 +6,27 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = "";
   const bytes = new Uint8Array(buffer);
   const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
   return window.btoa(binary);
 }
 
-async function ensureArabicFont(
-  doc: jsPDF,
-  fontFileName = "Amiri-Regular.ttf",
-) {
-  const cacheKey = "__pdfArabicFontLoaded";
-  if ((window as any)[cacheKey]) return (window as any)[cacheKey];
+async function loadAmiriFonts(doc: jsPDF) {
+  const load = async (name: string) => {
+    const res = await fetch(`/fonts/${name}`);
+    const buf = await res.arrayBuffer();
+    const base64 = arrayBufferToBase64(buf);
+    (doc as any).addFileToVFS(name, base64);
+  };
 
-  try {
-    const url = `/fonts/${fontFileName}`;
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error("Font fetch failed: " + resp.status);
-    const buffer = await resp.arrayBuffer();
-    const base64 = arrayBufferToBase64(buffer);
-    (doc as any).addFileToVFS(fontFileName, base64);
-    // Use the file base name (without extension) as the internal font name
-    const baseName = fontFileName.replace(/\.[^/.]+$/, "");
-    (doc as any).addFont(fontFileName, baseName, "normal");
-    (window as any)[cacheKey] = baseName;
-    return baseName;
-  } catch (e) {
-    console.warn("Could not embed Arabic font for PDF export:", e);
-    return "helvetica";
-  }
+  await load("Amiri-Regular.ttf");
+  await load("Amiri-Bold.ttf");
+
+  (doc as any).addFont("Amiri-Regular.ttf", "Amiri", "normal");
+  (doc as any).addFont("Amiri-Bold.ttf", "Amiri", "bold");
 }
+
 
 export async function exportTableToPDF(tableId: string): Promise<void> {
   const elem = document.getElementById(tableId);
@@ -107,8 +100,15 @@ export async function exportTableToPDF(tableId: string): Promise<void> {
     }
   }
 
-  const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "portrait" });
-  const fontName = await ensureArabicFont(doc);
+const doc = new jsPDF({
+  unit: "pt",
+  format: "a4",
+  orientation: "landscape", // 👈 خلي الجدول من اليمين للشمال ومريح
+});
+
+await loadAmiriFonts(doc);
+doc.setFont("Amiri", "normal");
+
 
   // Prepare column styles (right-align for Arabic by default)
   const columnStyles: { [key: string]: any } = {};
@@ -121,14 +121,8 @@ export async function exportTableToPDF(tableId: string): Promise<void> {
   // Draw title at top (RTL, right-aligned)
   const pageWidth = (doc as any).internal.pageSize.getWidth();
   // set PDF font (fontName will be the base filename like 'Amiri-Regular' when embedded)
-  try {
-    doc.setFont(fontName);
-  } catch (e) {
-    // If setFont fails, fall back to helvetica silently
-    try {
-      doc.setFont("helvetica");
-    } catch {}
-  }
+ doc.setFont("Amiri", "normal");
+
   doc.setFontSize(14);
   doc.setTextColor(20);
   if (displayTitle) {
@@ -137,32 +131,39 @@ export async function exportTableToPDF(tableId: string): Promise<void> {
     });
   }
 
+  // ===== RTL FIX: make first column appear on the RIGHT =====
+const rtlHeaders =
+  headers && headers.length > 0 ? [...headers].reverse() : [];
+
+const rtlRows = rows.map(row => [...row].reverse());
+
   (autoTable as any)(doc, {
-    head: headers && headers.length > 0 ? [headers] : [],
-    body: rows,
-    theme: "grid",
-    styles: {
-      font: fontName,
-      fontSize: 11,
-      cellPadding: 6,
-      valign: "middle",
-      halign: "right",
-      overflow: "linebreak",
-      lineColor: [200, 200, 200],
-      lineWidth: 0.5,
-    },
-    headStyles: {
-      fillColor: [250, 250, 250],
-      textColor: 30,
-      fontStyle: "bold",
-      halign: "center",
-    },
-    columnStyles,
-    startY,
-    margin,
-    tableWidth: "auto",
-    showHead: headers && headers.length > 0 ? "everyPage" : "firstPage",
-  });
+  head: rtlHeaders.length > 0 ? [rtlHeaders] : [],
+  body: rtlRows,
+  theme: "grid",
+  styles: {
+    font: "Amiri",
+    fontSize: 11,
+    cellPadding: 6,
+    valign: "middle",
+    halign: "right",
+    overflow: "linebreak",
+    lineColor: [200, 200, 200],
+    lineWidth: 0.5,
+  },
+  headStyles: {
+    fillColor: [250, 250, 250],
+    font: "Amiri",
+    fontStyle: "bold",
+    textColor: 30,
+    halign: "center",
+  },
+  columnStyles,
+  startY,
+  margin,
+  tableWidth: "auto",
+  showHead: rtlHeaders.length > 0 ? "everyPage" : "firstPage",
+});
 
   const dateStr = new Date().toISOString().slice(0, 10);
   const safeName = `${tableNameAttr}-${dateStr}`.replace(/\s+/g, "-");
