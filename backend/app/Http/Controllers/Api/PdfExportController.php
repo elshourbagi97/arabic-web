@@ -96,10 +96,10 @@ class PdfExportController extends Controller
             padding: 8px; 
             text-align: right; 
         }
-        th { 
-            background-color: #f8f9fa; 
-            /* Disable bold to prevent font substitution issues with Arabic */
-            font-weight: normal; 
+        th {
+            background-color: #f8f9fa;
+            font-family: aealarabiya !important;
+            font-weight: normal !important;
         }
         tr:nth-child(even) { background-color: #f9f9f9; }
         
