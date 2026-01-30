@@ -6,6 +6,8 @@ use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Mpdf\Mpdf;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class PdfExportController extends Controller
 {
