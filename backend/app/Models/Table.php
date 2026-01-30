@@ -24,10 +24,12 @@ class Table extends Model
     ];
 
     protected $casts = [
-        'column_headers' => 'array',
         'data' => 'array',
+        'column_headers' => 'array',
         'last_updated' => 'datetime',
     ];
+
+
 
     public function user()
     {

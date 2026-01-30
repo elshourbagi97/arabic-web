@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use Mpdf\Mpdf;
 
 class PdfExportController extends Controller
 {

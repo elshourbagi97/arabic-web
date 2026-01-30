@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PdfExportController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\SectionController;
 use App\Http\Controllers\Api\NotesController;
+use App\Http\Controllers\Api\DebugController;
 
 Route::middleware('cors')->group(function () {
 
