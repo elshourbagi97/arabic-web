@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\Note;
 use Illuminate\Http\Request;

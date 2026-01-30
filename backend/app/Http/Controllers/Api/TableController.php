@@ -9,6 +9,9 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+
 
 class TableController extends Controller
 {
