@@ -31,8 +31,8 @@ Make sure the PHP extensions required by Laravel are installed: `pdo`, `pdo_mysq
 1. Clone the repository and open a terminal:
 
 ```bash
-git clone <your-repo-url>
-cd <repo-folder>/backend
+git clone https://github.com/elshourbagi97/arabic-web.git
+cd arabic-web/backend
 ```
 
 2. Install PHP dependencies with Composer:
