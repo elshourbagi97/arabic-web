@@ -849,7 +849,7 @@ function App() {
             },
           };
         });
-        alert("تم الحفظ التلقائي بنجاح");
+        // alert("تم الحفظ التلقائي بنجاح");
       } catch (e) {
         console.error("Auto-save failed", e);
         alert("فشل الحفظ التلقائي");
@@ -902,7 +902,7 @@ function App() {
           },
         };
       });
-      alert("تم الحفظ التلقائي بنجاح");
+      // alert("تم الحفظ التلقائي بنجاح");
     } catch (e) {
       console.error("Auto-save failed", e);
       alert("فشل الحفظ التلقائي");
