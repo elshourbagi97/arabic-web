@@ -45,6 +45,25 @@ class ImageController extends Controller
         ], 201);
     }
 
+    public function show($id)
+    {
+        $image = Image::findOrFail($id);
+        
+        if (!Storage::disk('public')->exists($image->path)) {
+            return response()->json(['message' => 'Image not found'], 404);
+        }
+
+        $file = Storage::disk('public')->get($image->path);
+        $mimeType = Storage::disk('public')->mimeType($image->path) ?? $image->mime_type ?? 'image/jpeg';
+
+        return response($file)
+            ->header('Content-Type', $mimeType)
+            ->header('Cache-Control', 'public, max-age=86400')
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type');
+    }
+
     public function destroy(Request $request, Image $image)
     {
         if ($image->user_id !== $request->user()->id && !$request->user()->isAdmin()) {

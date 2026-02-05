@@ -43,6 +43,7 @@ Route::middleware('cors')->group(function () {
 
         // Images
         Route::get('/images', [ImageController::class, 'index']);
+        Route::get('/images/{id}/file', [ImageController::class, 'show']);
         Route::post('/images', [ImageController::class, 'store']);
         Route::delete('/images/{image}', [ImageController::class, 'destroy']);
 

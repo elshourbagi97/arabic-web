@@ -24,11 +24,10 @@ export function ImageGallery() {
     loadImages();
   }, []);
 
-  const getImageUrl = (path: string): string => {
-    // Get the base URL from apiService and remove /api to point to storage
+  const getImageUrl = (imageId: number): string => {
+    // Use the API endpoint to serve images with CORS headers
     const baseUrl = apiService["baseURL"] || "https://b2005.com/api";
-    const storageUrl = baseUrl.replace(/\/api$/, "");
-    return `${storageUrl}/storage/${path}`;
+    return `${baseUrl}/images/${imageId}/file`;
   };
 
   const loadImages = async () => {
@@ -229,8 +228,9 @@ export function ImageGallery() {
                 {/* Image Thumbnail */}
                 <div className="relative bg-gray-100 aspect-square overflow-hidden">
                   <img
-                    src={getImageUrl(image.path)}
+                    src={getImageUrl(image.id)}
                     alt={image.original_name}
+                    crossOrigin="anonymous"
                     className="w-full h-full object-cover hover:scale-110 transition-transform"
                   />
                 </div>
@@ -298,8 +298,9 @@ export function ImageGallery() {
             </div>
             <div className="p-4">
               <img
-                src={getImageUrl(selectedImage.path)}
+                src={getImageUrl(selectedImage.id)}
                 alt={selectedImage.original_name}
+                crossOrigin="anonymous"
                 className="w-full h-auto rounded"
               />
               <div className="mt-4 space-y-2">
