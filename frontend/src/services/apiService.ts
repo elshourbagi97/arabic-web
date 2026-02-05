@@ -284,6 +284,14 @@ class ApiService {
     return response.data;
   }
 
+  // Section rename
+  async renameSection(id: number, newName: string) {
+    const response = await this.api.patch(`/sections/${id}/rename`, {
+      name: newName,
+    });
+    return response.data;
+  }
+
   // Table Row Methods
   async addTableRow(tableId: number, rowData: string[]) {
     const response = await this.api.post(`/tables/${tableId}/rows`, {

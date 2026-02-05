@@ -82,6 +82,30 @@ export function NotesTextarea({
     }
   };
 
+  const handleDeleteNote = async (noteId: number) => {
+    if (!window.confirm("هل أنت متأكد من حذف هذه الملاحظة؟")) {
+      return;
+    }
+
+    try {
+      const response = await apiService.deleteNote(noteId);
+      if (response.success) {
+        // Refresh the notes list after deletion
+        await fetchNotes();
+        setSaveMessage({ type: "success", text: "تم حذف الملاحظة بنجاح" });
+        setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        setSaveMessage({
+          type: "error",
+          text: response.message || "فشل حذف الملاحظة",
+        });
+      }
+    } catch (error: any) {
+      const errorText = error.response?.data?.message || "خطأ في حذف الملاحظة";
+      setSaveMessage({ type: "error", text: errorText });
+    }
+  };
+
   return (
     <div className="w-full">
       <label
@@ -107,10 +131,11 @@ export function NotesTextarea({
       {/* Save Message */}
       {saveMessage && (
         <div
-          className={`mt-2 p-3 rounded text-center ${saveMessage.type === "success"
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-            }`}
+          className={`mt-2 p-3 rounded text-center ${
+            saveMessage.type === "success"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
         >
           {saveMessage.text}
         </div>
@@ -145,8 +170,16 @@ export function NotesTextarea({
                 <div className="text-[var(--text-dark)] mb-2 whitespace-pre-wrap text-right">
                   {note.content}
                 </div>
-                <div className="text-xs text-gray-500 text-left" dir="ltr">
-                  {new Date(note.created_at).toLocaleString("ar-SA")}
+                <div className="flex justify-between items-center text-xs text-gray-500">
+                  <button
+                    onClick={() => handleDeleteNote(note.id)}
+                    className="text-red-500 hover:text-red-700 font-semibold"
+                  >
+                    حذف
+                  </button>
+                  <div dir="ltr">
+                    {new Date(note.created_at).toLocaleString("ar-SA")}
+                  </div>
                 </div>
               </div>
             ))}

@@ -12,6 +12,7 @@ class Note extends Model
     protected $table = 'notes';
 
     protected $fillable = [
+        'user_id',
         'table_name',
         'content',
     ];
@@ -20,4 +21,12 @@ class Note extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Get the user that owns the note
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

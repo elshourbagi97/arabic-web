@@ -93,6 +93,13 @@ function App() {
     name: string;
   } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [sectionToRename, setSectionToRename] = useState<{
+    id: number | null;
+    name: string;
+  } | null>(null);
+  const [newSectionRename, setNewSectionRename] = useState("");
+  const [isRenaming, setIsRenaming] = useState(false);
 
   // Store tables per user
   const [userTablesData, setUserTablesData] = useState<UserTableData>({
@@ -456,6 +463,112 @@ function App() {
   const cancelDeleteSection = () => {
     setDeleteDialogOpen(false);
     setSectionToDelete(null);
+  };
+
+  const handleRenameSection = (id: number | null, name: string) => {
+    if (!currentUser) {
+      alert("يرجى تسجيل الدخول لإعادة تسمية الأقسام");
+      return;
+    }
+    setSectionToRename({ id, name });
+    setNewSectionRename(name);
+    setRenameDialogOpen(true);
+  };
+
+  const confirmRenameSection = async () => {
+    if (!sectionToRename || !currentUser || !newSectionRename.trim()) return;
+
+    const { id, name } = sectionToRename;
+    const trimmedName = newSectionRename.trim();
+
+    if (trimmedName === name) {
+      alert("الاسم الجديد هو نفس الاسم القديم");
+      return;
+    }
+
+    try {
+      setIsRenaming(true);
+      let sectionId = id;
+
+      // If no ID, try to find it from current sections state
+      if (!sectionId) {
+        const found = sections.find(
+          (s) => s.name.trim().toLowerCase() === name.trim().toLowerCase(),
+        );
+        sectionId = found?.id || null;
+      }
+
+      // If still no ID, refresh from backend
+      if (!sectionId) {
+        try {
+          const list = await apiService.getSections();
+          const normalizedArray: any[] = (() => {
+            if (!list) return [];
+            if (Array.isArray(list)) return list;
+            if (Array.isArray(list.data)) return list.data;
+            if (Array.isArray(list.sections)) return list.sections;
+            if (Array.isArray(list.items)) return list.items;
+            if (typeof list === "object") return Object.values(list);
+            return [];
+          })();
+          const found = normalizedArray
+            .map((it) =>
+              typeof it === "string"
+                ? { id: null, name: it }
+                : {
+                    id: it.id || null,
+                    name: it.name || it.title || it.label || String(it),
+                  },
+            )
+            .find(
+              (s: any) =>
+                s.name &&
+                s.name.trim().toLowerCase() === name.trim().toLowerCase(),
+            );
+          sectionId = found?.id || null;
+        } catch (refreshErr) {
+          console.error("Failed to refresh sections", refreshErr);
+        }
+      }
+
+      if (!sectionId || sectionId === null) {
+        alert("تعذر العثور على معرف القسم.");
+        setRenameDialogOpen(false);
+        setSectionToRename(null);
+        setIsRenaming(false);
+        return;
+      }
+
+      await apiService.renameSection(Number(sectionId), trimmedName);
+
+      // Update local state
+      setSections((prev) =>
+        prev.map((s) => (s.id === sectionId ? { ...s, name: trimmedName } : s)),
+      );
+
+      // If renamed section was active, update active section
+      if (activeSection === name) {
+        setActiveSection(trimmedName);
+      }
+
+      alert("تم إعادة تسمية القسم بنجاح");
+      setRenameDialogOpen(false);
+      setSectionToRename(null);
+      setNewSectionRename("");
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.message || "فشل في إعادة تسمية القسم";
+      alert(errorMsg);
+      console.error("Failed to rename section:", error);
+    } finally {
+      setIsRenaming(false);
+    }
+  };
+
+  const cancelRenameSection = () => {
+    setRenameDialogOpen(false);
+    setSectionToRename(null);
+    setNewSectionRename("");
   };
 
   const getCurrentUserData = () => {
@@ -1206,6 +1319,45 @@ function App() {
         isLoading={isDeleting}
       />
 
+      {/* Rename Dialog */}
+      {renameDialogOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+          dir="rtl"
+        >
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+            <h2 className="text-lg font-bold mb-4 text-[var(--text-dark)]">
+              إعادة تسمية القسم
+            </h2>
+            <input
+              type="text"
+              value={newSectionRename}
+              onChange={(e) => setNewSectionRename(e.target.value)}
+              placeholder="أدخل اسم القسم الجديد"
+              className="w-full px-4 py-2 border border-[var(--light-gray)] rounded-lg focus:outline-none focus:border-[var(--primary-blue)] mb-4"
+              disabled={isRenaming}
+              autoFocus
+            />
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={cancelRenameSection}
+                disabled={isRenaming}
+                className="px-4 py-2 border border-[var(--light-gray)] rounded hover:bg-gray-100 disabled:opacity-50"
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={confirmRenameSection}
+                disabled={isRenaming || !newSectionRename.trim()}
+                className="px-4 py-2 bg-[var(--primary-blue)] text-white rounded hover:opacity-90 disabled:opacity-50"
+              >
+                {isRenaming ? "جاري الحفظ..." : "حفظ"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* User Header */}
       <UserHeader
         user={currentUser}
@@ -1251,11 +1403,15 @@ function App() {
           <div className="flex gap-4 flex-wrap">
             {/* Dynamic sections loaded from API */}
             {sections.map((s) => (
-              <div key={s.id ?? s.name} className="relative group inline-block">
+              <div
+                key={s.id ?? s.name}
+                className="relative group inline-block"
+                title="انقر لإعادة تسمية القسم"
+              >
                 <TopSelectionButton
                   isActive={activeSection === s.name}
-                  onClick={() => handleSectionSelect(s.name)}
-                  className="pr-10"
+                  onClick={() => handleRenameSection(s.id, s.name)}
+                  className="pl-10 cursor-pointer hover:opacity-80"
                 >
                   {s.name}
                 </TopSelectionButton>

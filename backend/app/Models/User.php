@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @mixin IdeHelperUser
  */
-class User extends Model
+class User extends Authenticatable
 {
     use HasApiTokens;
     protected $fillable = [
@@ -36,6 +36,11 @@ class User extends Model
     public function images()
     {
         return $this->hasMany(Image::class);
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class);
     }
 
     public function isAdmin()
