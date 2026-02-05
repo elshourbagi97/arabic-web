@@ -12,23 +12,34 @@ class ImageController extends Controller
     public function index(Request $request)
     {
         $images = $request->user()->images()->get();
+
+        $data = $images->map(function ($image) {
+            return [
+                'id' => $image->id,
+                'original_name' => $image->original_name,
+                'description' => $image->description,
+                'mime_type' => $image->mime_type,
+                'size' => $image->size,
+                'created_at' => $image->created_at,
+                'url' => "/api/images/{$image->id}/file",
+            ];
+        });
+
         return response()->json([
             'success' => true,
-            'data' => $images,
+            'data' => $data,
         ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'file' => 'required|image|max:10240', // 10MB max
+            'file' => 'required|image|max:10240',
             'description' => 'nullable|string',
         ]);
 
         $file = $validated['file'];
-        $path = 'uploads/' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-        Storage::disk('public')->put($path, file_get_contents($file));
+        $path = $file->store('uploads', 'public');
 
         $image = $request->user()->images()->create([
             'filename' => basename($path),
@@ -40,34 +51,38 @@ class ImageController extends Controller
         ]);
 
         return response()->json([
-            'success' => true,
-            'data' => $image,
+            'id' => $image->id,
+            'url' => "/api/images/{$image->id}/file",
         ], 201);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $image = Image::findOrFail($id);
-        
+
+        if ($image->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         if (!Storage::disk('public')->exists($image->path)) {
             return response()->json(['message' => 'Image not found'], 404);
         }
 
-        $file = Storage::disk('public')->get($image->path);
         $mimeType = Storage::disk('public')->mimeType($image->path) ?? $image->mime_type ?? 'image/jpeg';
 
-        return response($file)
-            ->header('Content-Type', $mimeType)
-            ->header('Cache-Control', 'public, max-age=86400')
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
-            ->header('Access-Control-Allow-Headers', 'Content-Type');
+        return response()->file(
+            Storage::disk('public')->path($image->path),
+            [
+                'Content-Type' => $mimeType,
+                'Cache-Control' => 'private, max-age=86400',
+            ]
+        );
     }
 
     public function destroy(Request $request, Image $image)
     {
         if ($image->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Forbidden'], 403);
         }
 
         Storage::disk('public')->delete($image->path);

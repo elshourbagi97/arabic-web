@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import apiService from "../../services/apiService";
 
 interface Image {
   id: number;
-  filename: string;
   original_name: string;
-  path: string;
+  url: string;
   description?: string;
   created_at: string;
   size: number;
@@ -19,15 +18,58 @@ export function ImageGallery() {
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [blobUrls, setBlobUrls] = useState<{ [key: number]: string }>({});
+  const blobUrlsRef = useRef(blobUrls);
+  const loadingIdsRef = useRef<Set<number>>(new Set());
+
+  blobUrlsRef.current = blobUrls;
 
   useEffect(() => {
     loadImages();
   }, []);
 
-  const getImageUrl = (imageId: number): string => {
-    // Use the API endpoint to serve images with CORS headers
-    const baseUrl = apiService["baseURL"] || "https://b2005.com/api";
-    return `${baseUrl}/images/${imageId}/file`;
+  useEffect(() => {
+    images.forEach((image) => {
+      if (blobUrlsRef.current[image.id]) return;
+      if (loadingIdsRef.current.has(image.id)) return;
+      loadingIdsRef.current.add(image.id);
+      getDisplayUrl(image.id);
+    });
+  }, [images]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(blobUrlsRef.current).forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, []);
+
+  const getDisplayUrl = async (imageId: number): Promise<string> => {
+    if (blobUrlsRef.current[imageId]) {
+      return blobUrlsRef.current[imageId];
+    }
+
+    try {
+      const response = await apiService["api"].get(`/images/${imageId}/file`, {
+        responseType: "blob",
+      });
+
+      const blob = response.data;
+      const blobUrl = URL.createObjectURL(blob);
+
+      setBlobUrls((prev) => {
+        const next = { ...prev, [imageId]: blobUrl };
+        loadingIdsRef.current.delete(imageId);
+        return next;
+      });
+
+      return blobUrl;
+    } catch (error) {
+      console.error("[ImageGallery] Error fetching image:", error);
+      loadingIdsRef.current.delete(imageId);
+      return "";
+    }
   };
 
   const loadImages = async () => {
@@ -71,13 +113,10 @@ export function ImageGallery() {
       setUploadError(null);
       setUploadSuccess(null);
 
-      const response = await apiService.uploadImage(file);
-      console.log("[ImageGallery] Upload Response:", response);
-      const newImage = response?.data || response;
-
-      setImages((prev) => [newImage, ...prev]);
+      await apiService.uploadImage(file);
       setUploadSuccess("تم تحميل الصورة بنجاح");
       event.target.value = "";
+      await loadImages();
 
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(null), 3000);
@@ -109,16 +148,19 @@ export function ImageGallery() {
     }
   };
 
-  const formatFileSize = (bytes: number): string => {
+  const formatFileSize = (bytes: number | undefined): string => {
+    if (bytes == null || Number.isNaN(Number(bytes))) return "—";
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const i = Math.max(0, Math.min(2, Math.floor(Math.log(bytes) / Math.log(k))));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
-  const formatDate = (dateString: string): string => {
+  const formatDate = (dateString: string | undefined): string => {
+    if (dateString == null || dateString === "") return "—";
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "—";
     return date.toLocaleDateString("ar-SA", {
       year: "numeric",
       month: "long",
@@ -227,12 +269,17 @@ export function ImageGallery() {
               >
                 {/* Image Thumbnail */}
                 <div className="relative bg-gray-100 aspect-square overflow-hidden">
-                  <img
-                    src={getImageUrl(image.id)}
-                    alt={image.original_name}
-                    crossOrigin="anonymous"
-                    className="w-full h-full object-cover hover:scale-110 transition-transform"
-                  />
+                  {blobUrls[image.id] ? (
+                    <img
+                      src={blobUrls[image.id]}
+                      alt={image.original_name}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-blue)]"></div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Image Info */}
@@ -297,12 +344,20 @@ export function ImageGallery() {
               </button>
             </div>
             <div className="p-4">
-              <img
-                src={getImageUrl(selectedImage.id)}
-                alt={selectedImage.original_name}
-                crossOrigin="anonymous"
-                className="w-full h-auto rounded"
-              />
+              {blobUrls[selectedImage.id] ? (
+                <img
+                  src={blobUrls[selectedImage.id]}
+                  alt={selectedImage.original_name}
+                  className="w-full h-auto rounded"
+                />
+              ) : (
+                <div className="w-full h-64 flex items-center justify-center bg-gray-100 rounded">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-blue)] mx-auto mb-2"></div>
+                    <p style={{ color: "var(--text-medium)", fontSize: "var(--font-size-sm)" }}>جاري تحميل الصورة...</p>
+                  </div>
+                </div>
+              )}
               <div className="mt-4 space-y-2">
                 <p>
                   <span
