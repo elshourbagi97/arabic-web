@@ -11,8 +11,6 @@ interface Image {
   size: number;
 }
 
-const API_BASE_URL = "https://b2005.com/api";
-
 export function ImageGallery() {
   const [images, setImages] = useState<Image[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +25,10 @@ export function ImageGallery() {
   }, []);
 
   const getImageUrl = (path: string): string => {
-    return `${API_BASE_URL}/storage/${path}`;
+    // Get the base URL from apiService and remove /api to point to storage
+    const baseUrl = apiService["baseURL"] || "https://b2005.com/api";
+    const storageUrl = baseUrl.replace(/\/api$/, "");
+    return `${storageUrl}/storage/${path}`;
   };
 
   const loadImages = async () => {
