@@ -11,7 +11,7 @@ import { DeleteConfirmDialog } from "./components/DeleteConfirmDialog";
 import { AnimatedAddButton } from "./components/AnimatedAddButton";
 import { UserHeader } from "./components/UserHeader";
 import { AdminPanel } from "./components/AdminPanel";
-import { ImageUploadPage } from "./components/ImageUploadPage";
+import { ImageGallery } from "./components/ImageGallery";
 import { LoginPage } from "./components/LoginPage";
 import { RegistrationPage } from "./components/RegistrationPage";
 import apiService from "../services/apiService";
@@ -1406,11 +1406,18 @@ function App() {
               <div
                 key={s.id ?? s.name}
                 className="relative group inline-block"
-                title="انقر لإعادة تسمية القسم"
+                title="انقر للاختيار، نقرة مزدوجة لإعادة التسمية"
               >
                 <TopSelectionButton
                   isActive={activeSection === s.name}
-                  onClick={() => handleRenameSection(s.id, s.name)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSectionSelect(s.name);
+                  }}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation();
+                    handleRenameSection(s.id, s.name);
+                  }}
                   className="pl-10 cursor-pointer hover:opacity-80"
                 >
                   {s.name}
@@ -1482,12 +1489,8 @@ function App() {
           <AdminPanel users={getAllUsersData()} />
         )}
 
-        {/* Image Upload Page */}
-        {activeSection === "images" && (
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <ImageUploadPage />
-          </div>
-        )}
+        {/* Image Gallery */}
+        {activeSection === "images" && <ImageGallery />}
 
         {/* Main Content - Only show when section is selected */}
         {activeSection &&

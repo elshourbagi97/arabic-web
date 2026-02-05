@@ -12,7 +12,10 @@ class ImageController extends Controller
     public function index(Request $request)
     {
         $images = $request->user()->images()->get();
-        return response()->json($images);
+        return response()->json([
+            'success' => true,
+            'data' => $images,
+        ]);
     }
 
     public function store(Request $request)
@@ -36,7 +39,10 @@ class ImageController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
 
-        return response()->json($image, 201);
+        return response()->json([
+            'success' => true,
+            'data' => $image,
+        ], 201);
     }
 
     public function destroy(Request $request, Image $image)
@@ -48,6 +54,9 @@ class ImageController extends Controller
         Storage::disk('public')->delete($image->path);
         $image->delete();
 
-        return response()->json(['message' => 'Image deleted successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Image deleted successfully',
+        ]);
     }
 }
