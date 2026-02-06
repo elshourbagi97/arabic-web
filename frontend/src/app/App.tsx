@@ -649,11 +649,10 @@ function App() {
     const userData = getCurrentUserData();
     if (!userData || !currentUser || !activeSection) return;
 
-    if (userData.tables.length < 3) {
-      const category = resolveCategory(activeSection);
+    const category = resolveCategory(activeSection);
 
-      // Special handling for general notes section
-      if (activeSection === "notes") {
+    // Special handling for general notes section
+    if (activeSection === "notes") {
         const notesCategory = "ملاحظات";
         const noteTable = userData.tables.find(
           (t: any) => t.section === notesCategory,
@@ -669,107 +668,106 @@ function App() {
           },
         ];
 
-        (async () => {
-          try {
-            const res = await apiService.saveAllTables(notesCategory, payload);
-            const saved = res.saved || [];
-            setUserTablesData((prev) => {
-              const prevUser = prev[currentUser.email] || {
-                tables: [],
-                activeTableId: "",
-              };
-              const other = prevUser.tables.filter(
-                (x: any) => x.section !== notesCategory,
-              );
-              const mapped = saved.map((s: any) => ({
-                id: String(s.id),
-                label: s.label,
-                data:
-                  s.data ||
-                  Array(12)
-                    .fill(null)
-                    .map(() => Array(20).fill("")),
-                columnHeaders: s.column_headers || Array(20).fill(""),
-                notes: s.notes || "",
-                section: s.section || notesCategory,
-                lastUpdated: s.last_updated || s.updated_at || null,
-              }));
-              return {
-                ...prev,
-                [currentUser.email]: {
-                  tables: [...other, ...mapped],
-                  activeTableId:
-                    mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
-                },
-              };
-            });
-            alert("تم الحفظ التلقائي بنجاح");
-          } catch (e) {
-            console.error("Auto-save failed", e);
-            alert("فشل الحفظ التلقائي");
-          }
-        })();
-        return;
-      }
-
-      // non-notes: create a new table on the server and merge
-      (async () => {
-        try {
-          // Name the table as "جدول N" where N is next index for this category
-          const existing = userData.tables.filter(
-            (t: any) => t.section === category,
+    (async () => {
+      try {
+        const res = await apiService.saveAllTables(notesCategory, payload);
+        const saved = res.saved || [];
+        setUserTablesData((prev) => {
+          const prevUser = prev[currentUser.email] || {
+            tables: [],
+            activeTableId: "",
+          };
+          const other = prevUser.tables.filter(
+            (x: any) => x.section !== notesCategory,
           );
-          const nextIndex = existing.length + 1;
-          const newLabel = `جدول ${nextIndex}`;
-          const res = await apiService.createTableInSection(category, newLabel);
-          const created = res;
-          setUserTablesData((prev) => {
-            const prevUser = prev[currentUser.email] || {
-              tables: [],
-              activeTableId: "",
-            };
-            const other = prevUser.tables.filter(
-              (x: any) => x.section !== category,
-            );
-            const mapped = [
-              ...(created
-                ? [
-                    {
-                      id: String(created.id),
-                      label: created.label || newLabel,
-                      data:
-                        created.data ||
-                        Array(12)
-                          .fill(null)
-                          .map(() => Array(20).fill("")),
-                      columnHeaders:
-                        created.column_headers || Array(20).fill(""),
-                      notes: created.notes || "",
-                      section: created.section || category,
-                      lastUpdated:
-                        created.last_updated || created.updated_at || null,
-                    },
-                  ]
-                : []),
-            ];
-            return {
-              ...prev,
-              [currentUser.email]: {
-                tables: [
-                  ...other,
-                  ...prevUser.tables.filter((x: any) => x.section === category),
-                  ...mapped,
-                ],
-                activeTableId:
-                  mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
-              },
-            };
-          });
-        } catch (e) {
-          console.error("Failed to create table", e);
-        }
-      })();
+          const mapped = saved.map((s: any) => ({
+            id: String(s.id),
+            label: s.label,
+            data:
+              s.data ||
+              Array(12)
+                .fill(null)
+                .map(() => Array(20).fill("")),
+            columnHeaders: s.column_headers || Array(20).fill(""),
+            notes: s.notes || "",
+            section: s.section || notesCategory,
+            lastUpdated: s.last_updated || s.updated_at || null,
+          }));
+          return {
+            ...prev,
+            [currentUser.email]: {
+              tables: [...other, ...mapped],
+              activeTableId:
+                mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
+            },
+          };
+        });
+        alert("تم الحفظ التلقائي بنجاح");
+      } catch (e) {
+        console.error("Auto-save failed", e);
+        alert("فشل الحفظ التلقائي");
+      }
+    })();
+    return;
+  }
+
+  // non-notes: create a new table on the server and merge
+  (async () => {
+    try {
+      // Name the table as "جدول N" where N is next index for this category
+      const existing = userData.tables.filter(
+        (t: any) => t.section === category,
+      );
+      const nextIndex = existing.length + 1;
+      const newLabel = `جدول ${nextIndex}`;
+      const res = await apiService.createTableInSection(category, newLabel);
+      const created = res;
+      setUserTablesData((prev) => {
+        const prevUser = prev[currentUser.email] || {
+          tables: [],
+          activeTableId: "",
+        };
+        const other = prevUser.tables.filter(
+          (x: any) => x.section !== category,
+        );
+        const mapped = [
+          ...(created
+            ? [
+                {
+                  id: String(created.id),
+                  label: created.label || newLabel,
+                  data:
+                    created.data ||
+                    Array(12)
+                      .fill(null)
+                      .map(() => Array(20).fill("")),
+                  columnHeaders:
+                    created.column_headers || Array(20).fill(""),
+                  notes: created.notes || "",
+                  section: created.section || category,
+                  lastUpdated:
+                    created.last_updated || created.updated_at || null,
+                },
+              ]
+            : []),
+        ];
+        return {
+          ...prev,
+          [currentUser.email]: {
+            tables: [
+              ...other,
+              ...prevUser.tables.filter((x: any) => x.section === category),
+              ...mapped,
+            ],
+            activeTableId:
+              mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
+          },
+        };
+      });
+    } catch (e) {
+      console.error("Failed to create table", e);
     }
+  })();
   };
 
   const setActiveTableId = (tableId: string) => {
@@ -1576,13 +1574,11 @@ function App() {
               </div>
 
               {/* Add Table Button */}
-              {userData.tables.length < 3 && (
-                <div className="mb-6">
-                  <AnimatedAddButton onClick={handleAddTable}>
-                    إضافة جدول
-                  </AnimatedAddButton>
-                </div>
-              )}
+              <div className="mb-6">
+                <AnimatedAddButton onClick={handleAddTable}>
+                  إضافة جدول
+                </AnimatedAddButton>
+              </div>
 
               {/* Notes Section */}
               <div className="mb-6">
