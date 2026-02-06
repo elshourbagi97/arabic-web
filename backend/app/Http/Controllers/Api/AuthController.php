@@ -176,7 +176,11 @@ class AuthController extends Controller
         }
 
         // Check if token is expired (60 minutes)
-        if (now()->diffInMinutes($resetRecord->created_at) > 60) {
+        // Parse created_at timestamp and calculate minutes since creation
+        $createdAt = \Illuminate\Support\Carbon::parse($resetRecord->created_at);
+        $minutesSinceCreation = $createdAt->diffInMinutes(now(), false);
+        
+        if ($minutesSinceCreation > 60) {
             DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
             return response()->json([
                 'message' => 'رمز إعادة التعيين منتهي الصلاحية. يرجى طلب رابط جديد',
