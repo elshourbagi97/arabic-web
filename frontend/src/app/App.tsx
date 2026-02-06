@@ -434,6 +434,23 @@ function App() {
       await apiService.deleteSection(Number(sectionId));
       console.log("[App] Delete API call succeeded for section ID:", sectionId);
 
+      // remove deleted section tables from local cache (so notes/tables don't linger)
+      updateCurrentUserData((before) => {
+        const beforeTables = before.tables || [];
+        const removedIds = new Set(
+          beforeTables.filter((t: any) => t.section === name).map((t: any) => t.id),
+        );
+        const nextTables = beforeTables.filter((t: any) => t.section !== name);
+        const nextActiveId = removedIds.has(before.activeTableId)
+          ? (nextTables[0]?.id || "")
+          : before.activeTableId;
+        return {
+          ...before,
+          tables: nextTables,
+          activeTableId: nextActiveId,
+        };
+      });
+
       // remove from local state
       setSections((prev) =>
         prev.filter((s) => !(s.id === sectionId && s.name === name)),
@@ -548,7 +565,20 @@ function App() {
 
       // If renamed section was active, update active section
       if (activeSection === name) {
-        setActiveSection(trimmedName);
+        // Update cached tables section name locally so data doesn't "disappear"
+        updateCurrentUserData((before) => ({
+          ...before,
+          tables: (before.tables || []).map((t: any) => {
+            if (t.section === name) return { ...t, section: trimmedName };
+            return t;
+          }),
+        }));
+
+        // Update last selected section for this user
+        localStorage.setItem(`last_section_${currentUser.email}`, trimmedName);
+
+        // Reload tables under the new name from backend
+        handleSectionSelect(trimmedName);
       }
 
       alert("تم إعادة تسمية القسم بنجاح");
@@ -1410,14 +1440,8 @@ function App() {
               >
                 <TopSelectionButton
                   isActive={activeSection === s.name}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSectionSelect(s.name);
-                  }}
-                  onDoubleClick={(e) => {
-                    e.stopPropagation();
-                    handleRenameSection(s.id, s.name);
-                  }}
+                  onClick={() => handleSectionSelect(s.name)}
+                  onDoubleClick={() => handleRenameSection(s.id, s.name)}
                   className="pl-10 cursor-pointer hover:opacity-80"
                 >
                   {s.name}

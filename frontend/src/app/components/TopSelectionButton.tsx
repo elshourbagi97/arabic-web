@@ -2,7 +2,7 @@ import React from "react";
 
 interface TopSelectionButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   onDoubleClick?: React.MouseEventHandler<HTMLButtonElement>;
   isActive?: boolean;
   className?: string;

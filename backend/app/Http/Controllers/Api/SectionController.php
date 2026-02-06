@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Section;
+use App\Models\Table;
+use App\Models\TableRow;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
 
 class SectionController extends Controller
 {
@@ -65,7 +69,33 @@ class SectionController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        $section->delete();
+        $sectionName = $section->name;
+
+        DB::transaction(function () use ($section, $user, $sectionName) {
+            $tablesInSection = Table::where('user_id', $user->id)
+                ->where('section', $sectionName)
+                ->get(['id', 'label']);
+
+            $tableIds = $tablesInSection->pluck('id');
+            $tableLabels = $tablesInSection
+                ->pluck('label')
+                ->filter()
+                ->values();
+
+            if ($tableIds->isNotEmpty()) {
+                TableRow::whereIn('table_id', $tableIds)->delete();
+            }
+
+            if ($tableLabels->isNotEmpty()) {
+                Note::where('user_id', $user->id)
+                    ->whereIn('table_name', $tableLabels->all())
+                    ->delete();
+            }
+
+            Table::whereIn('id', $tableIds)->delete();
+
+            $section->delete();
+        });
 
         return response()->json(['message' => 'Section deleted successfully'], 200);
     }
@@ -90,6 +120,7 @@ class SectionController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
+        $oldName = $section->name;
         $newName = trim($validated['name']);
 
         // Check if new name already exists for this user
@@ -102,7 +133,13 @@ class SectionController extends Controller
             return response()->json(['message' => 'Section name already exists'], 422);
         }
 
-        $section->update(['name' => $newName]);
+        DB::transaction(function () use ($section, $user, $oldName, $newName) {
+            $section->update(['name' => $newName]);
+
+            Table::where('user_id', $user->id)
+                ->where('section', $oldName)
+                ->update(['section' => $newName]);
+        });
 
         return response()->json(['id' => $section->id, 'name' => $section->name], 200);
     }

@@ -39,7 +39,23 @@ class NotesController extends Controller
         // Only fetch notes belonging to the authenticated user
         /** @var User $user */
         $user = Auth::user();
-        $notes = $user->notes()
+
+        $existingTableNames = $user->tables()
+            ->whereNotNull('label')
+            ->pluck('label')
+            ->values()
+            ->all();
+
+        $notesQuery = $user->notes()->where(function ($q) use ($existingTableNames) {
+            if (!empty($existingTableNames)) {
+                $q->whereIn('table_name', $existingTableNames)
+                    ->orWhere('table_name', 'ملاحظات عامة');
+            } else {
+                $q->where('table_name', 'ملاحظات عامة');
+            }
+        });
+
+        $notes = $notesQuery
             ->orderBy('table_name')
             ->orderByDesc('created_at')
             ->get()
@@ -64,6 +80,17 @@ class NotesController extends Controller
         // Only fetch notes for this table that belong to the authenticated user
         /** @var User $user */
         $user = Auth::user();
+
+        if ($table_name !== 'ملاحظات عامة') {
+            $exists = $user->tables()->where('label', $table_name)->exists();
+            if (!$exists) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                ]);
+            }
+        }
+
         $notes = $user->notes()
             ->where('table_name', $table_name)
             ->latest()
