@@ -7406,3 +7406,34 @@ Did you mean one of these?
 #40 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
 #41 {main}
 "} 
+[2026-02-06 23:05:32] local.DEBUG: From: Arabic Website <noreply@yourdomain.com>
+To: test@example.com
+Subject: =?utf-8?Q?=D8=A5=D8=B9=D8=A7=D8=AF=D8=A9_=D8=AA=D8=B9?=
+ =?utf-8?Q?=D9=8A=D9=8A=D9=86_=D9=83=D9=84=D9=85=D8=A9_=D8=A7=D9=84=D9=85?=
+ =?utf-8?Q?=D8=B1=D9=88=D8=B1?=
+MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 23:05:32 +0000
+Message-ID: <28ecde231e96e62a5fe7d561a71a9c81@yourdomain.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #333;">إعادة تعيين كلمة المرور</h2>
+    <p>مرحباً Test User,</p>
+    <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+    <p>انقر على الزر أدناه لإعادة تعيين كلمة المرور:</p>
+    <p style="margin: 30px 0;">
+        <a href="http://localhost:3000/reset-password?token=test123&amp;email=test%40example.com" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+    </p>
+    <p style="color: #666; font-size: 14px;">إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد.</p>
+    <p style="color: #666; font-size: 14px;">ينتهي صلاحية هذا الرابط خلال 60 دقيقة.</p>
+</body>
+</html>
+  
