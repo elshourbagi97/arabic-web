@@ -7468,3 +7468,364 @@ Content-Transfer-Encoding: quoted-printable
 </body>
 </html>
   
+[2026-02-06 23:37:15] local.ERROR: SQLSTATE[HY000] [2002] Connection refused (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'arabicwebsite_db' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] Connection refused (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'arabicwebsite_db' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/StatusCommand.php(56): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\StatusCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/StatusCommand.php(55): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\StatusCommand->handle()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#24 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#25 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] Connection refused at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:66)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(66): PDO->__construct()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect()
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->Illuminate\\Database\\Connectors\\{closure}()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/StatusCommand.php(56): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\StatusCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/StatusCommand.php(55): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\StatusCommand->handle()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#34 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#35 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#36 {main}
+"} 
+[2026-02-06 23:37:24] local.ERROR: SQLSTATE[HY000]: General error: 1 near "n": syntax error (Connection: sqlite, SQL: 
+            UPDATE notes n
+            SET table_name = COALESCE(
+                (SELECT label FROM tables t WHERE t.id = n.table_id),
+                (SELECT table_name FROM tables t WHERE t.id = n.table_id),
+                "Unknown"
+            )
+            WHERE n.table_id IS NOT NULL AND n.table_name IS NULL
+        ) {"exception":"[object] (Illuminate\\Database\\QueryException(code: HY000): SQLSTATE[HY000]: General error: 1 near \"n\": syntax error (Connection: sqlite, SQL: 
+            UPDATE notes n
+            SET table_name = COALESCE(
+                (SELECT label FROM tables t WHERE t.id = n.table_id),
+                (SELECT table_name FROM tables t WHERE t.id = n.table_id),
+                \"Unknown\"
+            )
+            WHERE n.table_id IS NOT NULL AND n.table_name IS NULL
+        ) at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(779): Illuminate\\Database\\Connection->runQueryCallback()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(560): Illuminate\\Database\\Connection->run()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php(495): Illuminate\\Database\\Connection->statement()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(361): Illuminate\\Database\\DatabaseManager->__call()
+#4 /home/runner/work/arabic-web/arabic-web/backend/database/migrations/2026_01_29_000020_update_notes_table_to_use_table_name.php(21): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(507): Illuminate\\Database\\Migrations\\Migration@anonymous->up()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(432): Illuminate\\Database\\Migrations\\Migrator->runMethod()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(441): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(244): Illuminate\\Database\\Migrations\\Migrator->runMigration()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(40): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(798): Illuminate\\Console\\View\\Components\\Task->render()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(244): Illuminate\\Database\\Migrations\\Migrator->write()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(211): Illuminate\\Database\\Migrations\\Migrator->runUp()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(138): Illuminate\\Database\\Migrations\\Migrator->runPending()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(117): Illuminate\\Database\\Migrations\\Migrator->run()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(68): Illuminate\\Console\\Command->run()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(29): Illuminate\\Console\\Command->runCommand()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/FreshCommand.php(82): Illuminate\\Console\\Command->call()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\FreshCommand->handle()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#34 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#36 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#37 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#38 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#39 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#40 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#41 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#42 {main}
+
+[previous exception] [object] (PDOException(code: HY000): SQLSTATE[HY000]: General error: 1 near \"n\": syntax error at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:565)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(565): PDO->prepare()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(779): Illuminate\\Database\\Connection->runQueryCallback()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(560): Illuminate\\Database\\Connection->run()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/DatabaseManager.php(495): Illuminate\\Database\\Connection->statement()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(361): Illuminate\\Database\\DatabaseManager->__call()
+#6 /home/runner/work/arabic-web/arabic-web/backend/database/migrations/2026_01_29_000020_update_notes_table_to_use_table_name.php(21): Illuminate\\Support\\Facades\\Facade::__callStatic()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(507): Illuminate\\Database\\Migrations\\Migration@anonymous->up()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(432): Illuminate\\Database\\Migrations\\Migrator->runMethod()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(441): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(244): Illuminate\\Database\\Migrations\\Migrator->runMigration()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/View/Components/Task.php(40): Illuminate\\Database\\Migrations\\Migrator->Illuminate\\Database\\Migrations\\{closure}()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(798): Illuminate\\Console\\View\\Components\\Task->render()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(244): Illuminate\\Database\\Migrations\\Migrator->write()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(211): Illuminate\\Database\\Migrations\\Migrator->runUp()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(138): Illuminate\\Database\\Migrations\\Migrator->runPending()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(117): Illuminate\\Database\\Migrations\\Migrator->run()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(68): Illuminate\\Console\\Command->run()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Concerns/CallsCommands.php(29): Illuminate\\Console\\Command->runCommand()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/FreshCommand.php(82): Illuminate\\Console\\Command->call()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\FreshCommand->handle()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#34 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#36 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#37 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#38 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#39 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#40 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#41 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#42 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#43 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#44 {main}
+"} 
+[2026-02-06 23:38:24] local.DEBUG: From: Arabic Website <noreply@yourdomain.com>
+To: test@example.com
+Subject: =?utf-8?Q?=D8=A5=D8=B9=D8=A7=D8=AF=D8=A9_=D8=AA=D8=B9?=
+ =?utf-8?Q?=D9=8A=D9=8A=D9=86_=D9=83=D9=84=D9=85=D8=A9_=D8=A7=D9=84=D9=85?=
+ =?utf-8?Q?=D8=B1=D9=88=D8=B1?=
+MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 23:38:24 +0000
+Message-ID: <03c9b43bf49a081277e3a59d254c8b62@yourdomain.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #333;">إعادة تعيين كلمة المرور</h2>
+    <p>مرحباً Test User,</p>
+    <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+    <p>انقر على الزر أدناه لإعادة تعيين كلمة المرور:</p>
+    <p style="margin: 30px 0;">
+        <a href="http://localhost:3000/reset-password?token=K6uB6HJSxpTBFxpDiyyVmTi8Z8xx570PIzSTbQw7ILjYaYluN8k2myMIR2spvp6Z&amp;email=test%40example.com" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+    </p>
+    <p style="color: #666; font-size: 14px;">إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد.</p>
+    <p style="color: #666; font-size: 14px;">ينتهي صلاحية هذا الرابط خلال 60 دقيقة.</p>
+</body>
+</html>
+  
+[2026-02-06 23:38:59] local.DEBUG: From: Arabic Website <noreply@yourdomain.com>
+To: tokentest@example.com
+Subject: =?utf-8?Q?=D8=A5=D8=B9=D8=A7=D8=AF=D8=A9_=D8=AA=D8=B9?=
+ =?utf-8?Q?=D9=8A=D9=8A=D9=86_=D9=83=D9=84=D9=85=D8=A9_=D8=A7=D9=84=D9=85?=
+ =?utf-8?Q?=D8=B1=D9=88=D8=B1?=
+MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 23:38:59 +0000
+Message-ID: <343f38bd6d0abcb3e4d3c7d0b98dd34e@yourdomain.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #333;">إعادة تعيين كلمة المرور</h2>
+    <p>مرحباً Token Test User,</p>
+    <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+    <p>انقر على الزر أدناه لإعادة تعيين كلمة المرور:</p>
+    <p style="margin: 30px 0;">
+        <a href="http://localhost:3000/reset-password?token=9zLiaoXvCik05UpkQdD6LCJdOvhgH5vNAHjlh5GBg4AixMF44wBMVeYuI1Vr5SMW&amp;email=tokentest%40example.com" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+    </p>
+    <p style="color: #666; font-size: 14px;">إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد.</p>
+    <p style="color: #666; font-size: 14px;">ينتهي صلاحية هذا الرابط خلال 60 دقيقة.</p>
+</body>
+</html>
+  
+[2026-02-06 23:39:07] local.ERROR: Route [login] not defined. {"exception":"[object] (Symfony\\Component\\Routing\\Exception\\RouteNotFoundException(code: 0): Route [login] not defined. at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php:517)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(853): Illuminate\\Routing\\UrlGenerator->route()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php(278): route()
+#2 [internal function]: Illuminate\\Foundation\\Configuration\\ApplicationBuilder->Illuminate\\Foundation\\Configuration\\{closure}()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(118): call_user_func()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(105): Illuminate\\Auth\\Middleware\\Authenticate->redirectTo()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(88): Illuminate\\Auth\\Middleware\\Authenticate->unauthenticated()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(62): Illuminate\\Auth\\Middleware\\Authenticate->authenticate()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Auth\\Middleware\\Authenticate->handle()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(170): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#34 /home/runner/work/arabic-web/arabic-web/backend/public/index.php(40): Illuminate\\Foundation\\Http\\Kernel->handle()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#36 {main}
+"} 
+[2026-02-06 23:39:12] local.ERROR: Route [login] not defined. {"exception":"[object] (Symfony\\Component\\Routing\\Exception\\RouteNotFoundException(code: 0): Route [login] not defined. at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php:517)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(853): Illuminate\\Routing\\UrlGenerator->route()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php(278): route()
+#2 [internal function]: Illuminate\\Foundation\\Configuration\\ApplicationBuilder->Illuminate\\Foundation\\Configuration\\{closure}()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(118): call_user_func()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(105): Illuminate\\Auth\\Middleware\\Authenticate->redirectTo()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(88): Illuminate\\Auth\\Middleware\\Authenticate->unauthenticated()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(62): Illuminate\\Auth\\Middleware\\Authenticate->authenticate()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Auth\\Middleware\\Authenticate->handle()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(170): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#34 /home/runner/work/arabic-web/arabic-web/backend/public/index.php(40): Illuminate\\Foundation\\Http\\Kernel->handle()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#36 {main}
+"} 
+[2026-02-06 23:39:17] local.ERROR: Route [login] not defined. {"exception":"[object] (Symfony\\Component\\Routing\\Exception\\RouteNotFoundException(code: 0): Route [login] not defined. at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/UrlGenerator.php:517)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php(853): Illuminate\\Routing\\UrlGenerator->route()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php(278): route()
+#2 [internal function]: Illuminate\\Foundation\\Configuration\\ApplicationBuilder->Illuminate\\Foundation\\Configuration\\{closure}()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(118): call_user_func()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(105): Illuminate\\Auth\\Middleware\\Authenticate->redirectTo()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(88): Illuminate\\Auth\\Middleware\\Authenticate->unauthenticated()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(62): Illuminate\\Auth\\Middleware\\Authenticate->authenticate()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Auth\\Middleware\\Authenticate->handle()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(170): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(209): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(127): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#34 /home/runner/work/arabic-web/arabic-web/backend/public/index.php(40): Illuminate\\Foundation\\Http\\Kernel->handle()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#36 {main}
+"} 

@@ -198,10 +198,19 @@ class AuthController extends Controller
             ], 404);
         }
 
+        // Update password with proper hashing
         $user->password = Hash::make($validated['password']);
+        
+        // Refresh remember token for security (Laravel best practice)
+        $user->remember_token = \Illuminate\Support\Str::random(60);
+        
         $user->save();
 
-        // Delete reset token
+        // Revoke all existing Sanctum tokens for security
+        // This prevents old sessions from being used after password reset
+        $user->tokens()->delete();
+
+        // Delete reset token (prevents reuse)
         DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
 
         return response()->json([

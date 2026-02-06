@@ -18,15 +18,28 @@ return new class extends Migration
         });
 
         // Migrate existing notes by looking up the table name from table_id
-        DB::statement('
-            UPDATE notes n
-            SET table_name = COALESCE(
-                (SELECT label FROM tables t WHERE t.id = n.table_id),
-                (SELECT table_name FROM tables t WHERE t.id = n.table_id),
-                "Unknown"
-            )
-            WHERE n.table_id IS NOT NULL AND n.table_name IS NULL
-        ');
+        // Using SQLite-compatible syntax
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            DB::statement('
+                UPDATE notes
+                SET table_name = COALESCE(
+                    (SELECT label FROM tables WHERE tables.id = notes.table_id),
+                    (SELECT table_name FROM tables WHERE tables.id = notes.table_id),
+                    "Unknown"
+                )
+                WHERE notes.table_id IS NOT NULL AND notes.table_name IS NULL
+            ');
+        } else {
+            DB::statement('
+                UPDATE notes n
+                SET table_name = COALESCE(
+                    (SELECT label FROM tables t WHERE t.id = n.table_id),
+                    (SELECT table_name FROM tables t WHERE t.id = n.table_id),
+                    "Unknown"
+                )
+                WHERE n.table_id IS NOT NULL AND n.table_name IS NULL
+            ');
+        }
 
         // Drop the foreign key constraint
         Schema::table('notes', function (Blueprint $table) {
@@ -51,11 +64,20 @@ return new class extends Migration
         });
 
         // Migrate existing notes back to table_id
-        DB::statement('
-            UPDATE notes n
-            SET table_id = (SELECT id FROM tables t WHERE t.label = n.table_name OR t.table_name = n.table_name LIMIT 1)
-            WHERE n.table_name IS NOT NULL AND n.table_id IS NULL
-        ');
+        // Using SQLite-compatible syntax
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            DB::statement('
+                UPDATE notes
+                SET table_id = (SELECT id FROM tables WHERE tables.label = notes.table_name OR tables.table_name = notes.table_name LIMIT 1)
+                WHERE notes.table_name IS NOT NULL AND notes.table_id IS NULL
+            ');
+        } else {
+            DB::statement('
+                UPDATE notes n
+                SET table_id = (SELECT id FROM tables t WHERE t.label = n.table_name OR t.table_name = n.table_name LIMIT 1)
+                WHERE n.table_name IS NOT NULL AND n.table_id IS NULL
+            ');
+        }
 
         Schema::table('notes', function (Blueprint $table) {
             $table->dropColumn('table_name');
