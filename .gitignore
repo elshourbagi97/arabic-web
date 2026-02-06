@@ -12,4 +12,6 @@ backend/storage/framework/sessions/*
 !backend/storage/framework/sessions/.gitkeep
 backend/storage/framework/views/*
 !backend/storage/framework/views/.gitkeep
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
 *.zip
