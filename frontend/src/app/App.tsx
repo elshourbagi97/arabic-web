@@ -439,11 +439,13 @@ function App() {
       updateCurrentUserData((before) => {
         const beforeTables = before.tables || [];
         const removedIds = new Set(
-          beforeTables.filter((t: any) => t.section === name).map((t: any) => t.id),
+          beforeTables
+            .filter((t: any) => t.section === name)
+            .map((t: any) => t.id),
         );
         const nextTables = beforeTables.filter((t: any) => t.section !== name);
         const nextActiveId = removedIds.has(before.activeTableId)
-          ? (nextTables[0]?.id || "")
+          ? nextTables[0]?.id || ""
           : before.activeTableId;
         return {
           ...before,
@@ -653,121 +655,120 @@ function App() {
 
     // Special handling for general notes section
     if (activeSection === "notes") {
-        const notesCategory = "ملاحظات";
-        const noteTable = userData.tables.find(
-          (t: any) => t.section === notesCategory,
-        );
-        const payload = [
-          {
-            id:
-              noteTable && !noteTable.id.startsWith("table-")
-                ? Number(noteTable.id)
-                : undefined,
-            label: noteTable?.label || "ملاحظات عامة",
-            notes: generalNotes,
-          },
-        ];
+      const notesCategory = "ملاحظات";
+      const noteTable = userData.tables.find(
+        (t: any) => t.section === notesCategory,
+      );
+      const payload = [
+        {
+          id:
+            noteTable && !noteTable.id.startsWith("table-")
+              ? Number(noteTable.id)
+              : undefined,
+          label: noteTable?.label || "ملاحظات عامة",
+          notes: generalNotes,
+        },
+      ];
 
+      (async () => {
+        try {
+          const res = await apiService.saveAllTables(notesCategory, payload);
+          const saved = res.saved || [];
+          setUserTablesData((prev) => {
+            const prevUser = prev[currentUser.email] || {
+              tables: [],
+              activeTableId: "",
+            };
+            const other = prevUser.tables.filter(
+              (x: any) => x.section !== notesCategory,
+            );
+            const mapped = saved.map((s: any) => ({
+              id: String(s.id),
+              label: s.label,
+              data:
+                s.data ||
+                Array(12)
+                  .fill(null)
+                  .map(() => Array(20).fill("")),
+              columnHeaders: s.column_headers || Array(20).fill(""),
+              notes: s.notes || "",
+              section: s.section || notesCategory,
+              lastUpdated: s.last_updated || s.updated_at || null,
+            }));
+            return {
+              ...prev,
+              [currentUser.email]: {
+                tables: [...other, ...mapped],
+                activeTableId:
+                  mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
+              },
+            };
+          });
+          alert("تم الحفظ التلقائي بنجاح");
+        } catch (e) {
+          console.error("Auto-save failed", e);
+          alert("فشل الحفظ التلقائي");
+        }
+      })();
+      return;
+    }
+
+    // non-notes: create a new table on the server and merge
     (async () => {
       try {
-        const res = await apiService.saveAllTables(notesCategory, payload);
-        const saved = res.saved || [];
+        // Name the table as "جدول N" where N is next index for this category
+        const existing = userData.tables.filter(
+          (t: any) => t.section === category,
+        );
+        const nextIndex = existing.length + 1;
+        const newLabel = `جدول ${nextIndex}`;
+        const res = await apiService.createTableInSection(category, newLabel);
+        const created = res;
         setUserTablesData((prev) => {
           const prevUser = prev[currentUser.email] || {
             tables: [],
             activeTableId: "",
           };
           const other = prevUser.tables.filter(
-            (x: any) => x.section !== notesCategory,
+            (x: any) => x.section !== category,
           );
-          const mapped = saved.map((s: any) => ({
-            id: String(s.id),
-            label: s.label,
-            data:
-              s.data ||
-              Array(12)
-                .fill(null)
-                .map(() => Array(20).fill("")),
-            columnHeaders: s.column_headers || Array(20).fill(""),
-            notes: s.notes || "",
-            section: s.section || notesCategory,
-            lastUpdated: s.last_updated || s.updated_at || null,
-          }));
+          const mapped = [
+            ...(created
+              ? [
+                  {
+                    id: String(created.id),
+                    label: created.label || newLabel,
+                    data:
+                      created.data ||
+                      Array(12)
+                        .fill(null)
+                        .map(() => Array(20).fill("")),
+                    columnHeaders: created.column_headers || Array(20).fill(""),
+                    notes: created.notes || "",
+                    section: created.section || category,
+                    lastUpdated:
+                      created.last_updated || created.updated_at || null,
+                  },
+                ]
+              : []),
+          ];
           return {
             ...prev,
             [currentUser.email]: {
-              tables: [...other, ...mapped],
+              tables: [
+                ...other,
+                ...prevUser.tables.filter((x: any) => x.section === category),
+                ...mapped,
+              ],
               activeTableId:
                 mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
             },
           };
         });
-        alert("تم الحفظ التلقائي بنجاح");
       } catch (e) {
-        console.error("Auto-save failed", e);
-        alert("فشل الحفظ التلقائي");
+        console.error("Failed to create table", e);
       }
     })();
-    return;
-  }
-
-  // non-notes: create a new table on the server and merge
-  (async () => {
-    try {
-      // Name the table as "جدول N" where N is next index for this category
-      const existing = userData.tables.filter(
-        (t: any) => t.section === category,
-      );
-      const nextIndex = existing.length + 1;
-      const newLabel = `جدول ${nextIndex}`;
-      const res = await apiService.createTableInSection(category, newLabel);
-      const created = res;
-      setUserTablesData((prev) => {
-        const prevUser = prev[currentUser.email] || {
-          tables: [],
-          activeTableId: "",
-        };
-        const other = prevUser.tables.filter(
-          (x: any) => x.section !== category,
-        );
-        const mapped = [
-          ...(created
-            ? [
-                {
-                  id: String(created.id),
-                  label: created.label || newLabel,
-                  data:
-                    created.data ||
-                    Array(12)
-                      .fill(null)
-                      .map(() => Array(20).fill("")),
-                  columnHeaders:
-                    created.column_headers || Array(20).fill(""),
-                  notes: created.notes || "",
-                  section: created.section || category,
-                  lastUpdated:
-                    created.last_updated || created.updated_at || null,
-                },
-              ]
-            : []),
-        ];
-        return {
-          ...prev,
-          [currentUser.email]: {
-            tables: [
-              ...other,
-              ...prevUser.tables.filter((x: any) => x.section === category),
-              ...mapped,
-            ],
-            activeTableId:
-              mapped.length > 0 ? mapped[0].id : prevUser.activeTableId,
-          },
-        };
-      });
-    } catch (e) {
-      console.error("Failed to create table", e);
-    }
-  })();
   };
 
   const setActiveTableId = (tableId: string) => {

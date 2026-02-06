@@ -8,13 +8,13 @@ import axios, { AxiosInstance } from "axios";
  *DB_PORT=3307
  *DB_DATABASE=arabicwebsite_db
  *DB_USERNAME=root          # أو laravel_user لو عملت المستخدم
- *DB_PASSWORD=        
+ *DB_PASSWORD=
  */
 
 class ApiService {
   private api: AxiosInstance;
   // Use production API URL
-  private baseURL = "https://b2005.com/api";
+  private baseURL = "http://localhost:8000/api";
   private token: string | null = null;
 
   constructor() {
@@ -98,6 +98,11 @@ class ApiService {
       localStorage.setItem("auth_token", this.token);
     }
     this.setAuthHeader();
+    return response.data;
+  }
+
+  async forgotPassword(email: string) {
+    const response = await this.api.post("/auth/forgot-password", { email });
     return response.data;
   }
 

@@ -14,6 +14,7 @@ Route::middleware('cors')->group(function () {
     // Public routes
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
