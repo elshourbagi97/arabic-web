@@ -100,6 +100,7 @@ function App() {
   } | null>(null);
   const [newSectionRename, setNewSectionRename] = useState("");
   const [isRenaming, setIsRenaming] = useState(false);
+  const [notesReloadKey, setNotesReloadKey] = useState(0);
 
   // Store tables per user
   const [userTablesData, setUserTablesData] = useState<UserTableData>({
@@ -844,6 +845,7 @@ function App() {
           label: newName,
           data: table.data, // 👈 included as you wanted
         });
+        setNotesReloadKey((k) => k + 1);
       } catch (e) {
         // Rollback on error
         setUserTablesData((prev) => ({
@@ -1435,34 +1437,37 @@ function App() {
             {sections.map((s) => (
               <div
                 key={s.id ?? s.name}
-                className="relative group inline-block"
-                title="انقر للاختيار، نقرة مزدوجة لإعادة التسمية"
+                className="inline-flex items-center gap-2"
+                title="انقر للاختيار أو استخدم رمز القلم لإعادة التسمية"
               >
                 <TopSelectionButton
                   isActive={activeSection === s.name}
                   onClick={() => handleSectionSelect(s.name)}
                   onDoubleClick={() => handleRenameSection(s.id, s.name)}
-                  className="pl-10 cursor-pointer hover:opacity-80"
+                  className="cursor-pointer hover:opacity-80 flex items-center gap-2"
                 >
-                  {s.name}
+                  <span>{s.name}</span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRenameSection(s.id, s.name);
+                    }}
+                    className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[var(--primary-blue)] text-xs hover:bg-blue-50 transition-colors"
+                    title="إعادة تسمية القسم"
+                  >
+                    ✏️
+                  </span>
+                  <span
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSection(s.id, s.name);
+                    }}
+                    className="inline-flex items-center justify-center w-5 h-5 rounded-full text-[#d32f2f] text-sm font-bold hover:bg-red-100 transition-colors"
+                    title="حذف القسم"
+                  >
+                    ×
+                  </span>
                 </TopSelectionButton>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteSection(s.id, s.name);
-                  }}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-100 transition-colors"
-                  style={{
-                    color: "#d32f2f",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    border: "none",
-                    background: "transparent",
-                  }}
-                  title="حذف القسم"
-                >
-                  ×
-                </button>
               </div>
             ))}
 
@@ -1614,6 +1619,7 @@ function App() {
             value={generalNotes}
             onChange={setGeneralNotes}
             onSave={handleAutoSave}
+            reloadKey={notesReloadKey}
           />
         )}
 

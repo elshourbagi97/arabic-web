@@ -3,6 +3,12 @@ import axios, { AxiosInstance } from "axios";
 /**
  * API Service for communicating with Laravel Backend
  * Database: arabicwebsite_db
+ * DB_CONNECTION=mysql
+ *DB_HOST=127.0.0.1
+ *DB_PORT=3307
+ *DB_DATABASE=arabicwebsite_db
+ *DB_USERNAME=root          # أو laravel_user لو عملت المستخدم
+ *DB_PASSWORD=        
  */
 
 class ApiService {

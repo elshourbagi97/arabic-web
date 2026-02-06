@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Table;
 use App\Models\TableRow;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Schema;
@@ -81,6 +82,8 @@ class TableController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $oldLabel = $table->label;
+
         $update = [];
         if (array_key_exists('label', $validated)) $update['label'] = $validated['label'];
         if (array_key_exists('data', $validated)) $update['data'] = $validated['data'];
@@ -90,6 +93,12 @@ class TableController extends Controller
         if (!empty($update)) {
             $update['last_updated'] = now();
             $table->update($update);
+
+            if (array_key_exists('label', $validated) && !empty($oldLabel) && $validated['label'] !== $oldLabel) {
+                Note::where('user_id', $request->user()->id)
+                    ->where('table_name', $oldLabel)
+                    ->update(['table_name' => $validated['label']]);
+            }
         }
 
         return response()->json($table->fresh()->load('rows'));
@@ -168,13 +177,16 @@ class TableController extends Controller
         ]);
 
         // Use transaction for data integrity
+        $oldLabel = $table->label;
+        $newLabel = $validated['table_name'];
+
         try {
             \DB::beginTransaction();
 
-            $update = ['label' => $validated['table_name']];
+            $update = ['label' => $newLabel];
             // If DB has a dedicated `table_name` column, update it as well
             if (Schema::hasColumn($table->getTable(), 'table_name')) {
-                $update['table_name'] = $validated['table_name'];
+                $update['table_name'] = $newLabel;
             }
             if (array_key_exists('table_data', $validated) && $validated['table_data'] !== null) {
                 $update['data'] = $validated['table_data'];
@@ -182,6 +194,12 @@ class TableController extends Controller
             $update['last_updated'] = now();
 
             $table->update($update);
+
+            if (!empty($oldLabel)) {
+                Note::where('user_id', $request->user()->id)
+                    ->where('table_name', $oldLabel)
+                    ->update(['table_name' => $newLabel]);
+            }
 
             \DB::commit();
 
@@ -237,16 +255,25 @@ class TableController extends Controller
             ], 500);
         }
 
+        $oldLabel = $table->label;
+        $newLabel = $validated['table_name'];
+
         try {
             DB::beginTransaction();
 
-            $update = [ $tableNameCol => $validated['table_name'] ];
+            $update = [ $tableNameCol => $newLabel ];
             if (array_key_exists('table_data', $validated) && $validated['table_data'] !== null) {
                 $update['data'] = $validated['table_data'];
             }
             $update['last_updated'] = now();
 
             $table->update($update);
+
+            if (!empty($oldLabel)) {
+                Note::where('user_id', $request->user()->id)
+                    ->where('table_name', $oldLabel)
+                    ->update(['table_name' => $newLabel]);
+            }
 
             DB::commit();
 

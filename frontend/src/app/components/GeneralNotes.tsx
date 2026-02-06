@@ -18,16 +18,22 @@ interface GeneralNotesProps {
   value?: string;
   onChange?: (value: string) => void;
   onSave?: () => Promise<void>;
+  reloadKey?: number;
 }
 
-export function GeneralNotes({ value, onChange, onSave }: GeneralNotesProps) {
+export function GeneralNotes({
+  value,
+  onChange,
+  onSave,
+  reloadKey,
+}: GeneralNotesProps) {
   const [groupedNotes, setGroupedNotes] = useState<GroupedNotes[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     loadAllNotes();
-  }, []);
+  }, [reloadKey]);
 
   const loadAllNotes = async () => {
     try {
