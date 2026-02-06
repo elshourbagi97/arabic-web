@@ -5,6 +5,7 @@ This is a Laravel backend for the Arabic Website project with complete database 
 ## Features
 
 - User authentication (Login/Register)
+- **Password Reset via Email** ✨ NEW
 - Admin panel for user management
 - Table management with CRUD operations
 - Image upload functionality
@@ -78,7 +79,37 @@ php artisan migrate
 
 This will create all necessary tables in the database.
 
-### Step 5: Create Admin User (Optional)
+### Step 5: Configure Email (Optional - for Password Reset)
+
+For password reset functionality, you need to configure email settings.
+
+**Quick Test (Logs to file):**
+```bash
+# Keep MAIL_MAILER=log in .env
+php artisan email:test test@example.com
+# Check storage/logs/laravel.log
+```
+
+**Production Setup (SendGrid):**
+
+See [MAIL_SETUP.md](MAIL_SETUP.md) for complete SendGrid configuration guide.
+
+Quick steps:
+1. Get SendGrid API key from https://sendgrid.com/
+2. Update `.env`:
+   ```env
+   MAIL_MAILER=smtp
+   MAIL_HOST=smtp.sendgrid.net
+   MAIL_PORT=587
+   MAIL_USERNAME=apikey
+   MAIL_PASSWORD=your_sendgrid_api_key
+   MAIL_ENCRYPTION=tls
+   MAIL_FROM_ADDRESS=noreply@yourdomain.com
+   ```
+3. Test: `php artisan email:test your-email@example.com`
+4. Verify: `php artisan mail:verify`
+
+### Step 6: Create Admin User (Optional)
 
 ```bash
 php artisan tinker
@@ -111,6 +142,8 @@ Server runs at: `http://localhost:8000`
 - `POST /api/auth/register` - Register
 - `POST /api/auth/logout` - Logout
 - `GET /api/auth/profile` - Get current user profile
+- `POST /api/auth/forgot-password` - Request password reset email
+- `POST /api/auth/reset-password` - Reset password with token
 
 ### Tables
 
@@ -235,6 +268,58 @@ Ensure all dependencies are installed:
 
 ```bash
 composer require barryvdh/laravel-dompdf
+```
+
+### Email Issues
+
+For password reset email issues:
+
+1. **Run verification**: `php artisan mail:verify`
+2. **Check logs**: `tail -f storage/logs/laravel.log`
+3. **Test email**: `php artisan email:test your-email@example.com`
+4. **See guide**: [MAIL_SETUP.md](MAIL_SETUP.md) for complete troubleshooting
+
+Common issues:
+- Authentication failed: Check MAIL_USERNAME=apikey and MAIL_PASSWORD
+- Sender rejected: Verify sender email in SendGrid
+- Connection refused: Check firewall allows port 587
+
+## Artisan Commands
+
+### Email Testing & Verification
+
+```bash
+# Test email sending
+php artisan email:test your-email@example.com
+
+# Verify complete mail setup
+php artisan mail:verify
+```
+
+### Database
+
+```bash
+# Run migrations
+php artisan migrate
+
+# Rollback migrations
+php artisan migrate:rollback
+
+# Fresh migration
+php artisan migrate:fresh
+```
+
+### Cache
+
+```bash
+# Clear configuration cache
+php artisan config:clear
+
+# Clear application cache
+php artisan cache:clear
+
+# Cache configuration
+php artisan config:cache
 ```
 
 ## Support

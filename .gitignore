@@ -2,3 +2,14 @@ node_modules/
 vendor/*
 .env
 .env.local
+backend/.env
+backend/storage/logs/*.log
+backend/bootstrap/cache/*
+!backend/bootstrap/cache/.gitkeep
+backend/storage/framework/cache/*
+!backend/storage/framework/cache/.gitkeep
+backend/storage/framework/sessions/*
+!backend/storage/framework/sessions/.gitkeep
+backend/storage/framework/views/*
+!backend/storage/framework/views/.gitkeep
+*.zip

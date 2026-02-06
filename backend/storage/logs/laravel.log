@@ -7327,3 +7327,144 @@ Did you mean one of these?
 #37 C:/Users/lenovo/Desktop/arabic web figma/backend/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
 #38 {main}
 "} 
+[2026-02-06 23:04:29] local.ERROR: SQLSTATE[HY000] [2002] Connection refused (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'arabicwebsite_db' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] Connection refused (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'arabicwebsite_db' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select()
+#5 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#29 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#30 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] Connection refused at /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:66)
+[stacktrace]
+#0 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(66): PDO->__construct()
+#1 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection()
+#2 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection()
+#3 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection()
+#4 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect()
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->Illuminate\\Database\\Connectors\\{closure}()
+#6 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func()
+#7 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect()
+#10 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->Illuminate\\Database\\{closure}()
+#11 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback()
+#12 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection()
+#13 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException()
+#14 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run()
+#15 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select()
+#16 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne()
+#17 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar()
+#18 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable()
+#19 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#22 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry()
+#23 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#24 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#25 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->Illuminate\\Database\\Console\\Migrations\\{closure}()
+#26 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection()
+#27 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#28 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#29 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::Illuminate\\Container\\{closure}()
+#30 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure()
+#31 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#32 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call()
+#33 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call()
+#34 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute()
+#35 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run()
+#36 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(1102): Illuminate\\Console\\Command->run()
+#37 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand()
+#38 /home/runner/work/arabic-web/arabic-web/backend/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun()
+#39 /home/runner/work/arabic-web/arabic-web/backend/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run()
+#40 /home/runner/work/arabic-web/arabic-web/backend/artisan(24): Illuminate\\Foundation\\Console\\Kernel->handle()
+#41 {main}
+"} 
+[2026-02-06 23:05:32] local.DEBUG: From: Arabic Website <noreply@yourdomain.com>
+To: test@example.com
+Subject: =?utf-8?Q?=D8=A5=D8=B9=D8=A7=D8=AF=D8=A9_=D8=AA=D8=B9?=
+ =?utf-8?Q?=D9=8A=D9=8A=D9=86_=D9=83=D9=84=D9=85=D8=A9_=D8=A7=D9=84=D9=85?=
+ =?utf-8?Q?=D8=B1=D9=88=D8=B1?=
+MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 23:05:32 +0000
+Message-ID: <28ecde231e96e62a5fe7d561a71a9c81@yourdomain.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #333;">إعادة تعيين كلمة المرور</h2>
+    <p>مرحباً Test User,</p>
+    <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+    <p>انقر على الزر أدناه لإعادة تعيين كلمة المرور:</p>
+    <p style="margin: 30px 0;">
+        <a href="http://localhost:3000/reset-password?token=test123&amp;email=test%40example.com" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+    </p>
+    <p style="color: #666; font-size: 14px;">إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد.</p>
+    <p style="color: #666; font-size: 14px;">ينتهي صلاحية هذا الرابط خلال 60 دقيقة.</p>
+</body>
+</html>
+  
+[2026-02-06 23:09:29] local.DEBUG: From: Arabic Website <noreply@yourdomain.com>
+To: demo@example.com
+Subject: =?utf-8?Q?=D8=A5=D8=B9=D8=A7=D8=AF=D8=A9_=D8=AA=D8=B9?=
+ =?utf-8?Q?=D9=8A=D9=8A=D9=86_=D9=83=D9=84=D9=85=D8=A9_=D8=A7=D9=84=D9=85?=
+ =?utf-8?Q?=D8=B1=D9=88=D8=B1?=
+MIME-Version: 1.0
+Date: Fri, 06 Feb 2026 23:09:29 +0000
+Message-ID: <a782254a43685e08e95ab77df063cd4a@yourdomain.com>
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعادة تعيين كلمة المرور</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #333;">إعادة تعيين كلمة المرور</h2>
+    <p>مرحباً Test User,</p>
+    <p>تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.</p>
+    <p>انقر على الزر أدناه لإعادة تعيين كلمة المرور:</p>
+    <p style="margin: 30px 0;">
+        <a href="http://localhost:3000/reset-password?token=test123&amp;email=demo%40example.com" style="background-color: #4CAF50; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">إعادة تعيين كلمة المرور</a>
+    </p>
+    <p style="color: #666; font-size: 14px;">إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد.</p>
+    <p style="color: #666; font-size: 14px;">ينتهي صلاحية هذا الرابط خلال 60 دقيقة.</p>
+</body>
+</html>
+  
