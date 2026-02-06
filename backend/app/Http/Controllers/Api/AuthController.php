@@ -176,7 +176,13 @@ class AuthController extends Controller
         }
 
         // Check if token is expired (60 minutes)
-        if (now()->diffInMinutes($resetRecord->created_at) > 60) {
+        // Parse created_at timestamp and calculate minutes since creation
+        $createdAt = \Illuminate\Support\Carbon::parse($resetRecord->created_at);
+        // diffInMinutes with false parameter returns signed difference (negative if in future)
+        // This ensures we correctly detect tokens created in the past
+        $minutesSinceCreation = $createdAt->diffInMinutes(now(), false);
+        
+        if ($minutesSinceCreation > 60) {
             DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
             return response()->json([
                 'message' => 'رمز إعادة التعيين منتهي الصلاحية. يرجى طلب رابط جديد',
@@ -198,10 +204,19 @@ class AuthController extends Controller
             ], 404);
         }
 
+        // Update password with proper hashing
         $user->password = Hash::make($validated['password']);
+        
+        // Refresh remember token for security (Laravel best practice)
+        $user->remember_token = \Illuminate\Support\Str::random(60);
+        
         $user->save();
 
-        // Delete reset token
+        // Revoke all existing Sanctum tokens for security
+        // This prevents old sessions from being used after password reset
+        $user->tokens()->delete();
+
+        // Delete reset token (prevents reuse)
         DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
 
         return response()->json([

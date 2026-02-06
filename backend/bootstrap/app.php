@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
             'cors' => \App\Http\Middleware\HandleCors::class,
         ]);
+        
+        // Configure API authentication to return JSON instead of redirect
+        $middleware->redirectGuestsTo(fn () => abort(401, 'Unauthenticated'));
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
