@@ -178,6 +178,8 @@ class AuthController extends Controller
         // Check if token is expired (60 minutes)
         // Parse created_at timestamp and calculate minutes since creation
         $createdAt = \Illuminate\Support\Carbon::parse($resetRecord->created_at);
+        // diffInMinutes with false parameter returns signed difference (negative if in future)
+        // This ensures we correctly detect tokens created in the past
         $minutesSinceCreation = $createdAt->diffInMinutes(now(), false);
         
         if ($minutesSinceCreation > 60) {

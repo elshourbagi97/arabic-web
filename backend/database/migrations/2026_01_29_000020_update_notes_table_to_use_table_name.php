@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         // Migrate existing notes by looking up the table name from table_id
-        // Using SQLite-compatible syntax
+        // Note: SQLite and MySQL have different UPDATE syntax - aliases don't work in SQLite
         if (DB::connection()->getDriverName() === 'sqlite') {
             DB::statement('
                 UPDATE notes
@@ -64,7 +64,7 @@ return new class extends Migration
         });
 
         // Migrate existing notes back to table_id
-        // Using SQLite-compatible syntax
+        // Note: SQLite and MySQL have different UPDATE syntax - aliases don't work in SQLite
         if (DB::connection()->getDriverName() === 'sqlite') {
             DB::statement('
                 UPDATE notes
