@@ -14,6 +14,7 @@ import { AdminPanel } from "./components/AdminPanel";
 import { ImageGallery } from "./components/ImageGallery";
 import { LoginPage } from "./components/LoginPage";
 import { RegistrationPage } from "./components/RegistrationPage";
+import { ResetPasswordPage } from "./components/ResetPasswordPage";
 import apiService from "../services/apiService";
 import { exportTableToPDF } from "./components/ExportByTable";
 import ExportByTableExample from "./components/ExportByTable";
@@ -77,7 +78,7 @@ function App() {
   // Authentication state
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [authView, setAuthView] = useState<"login" | "register">("login");
+  const [authView, setAuthView] = useState<"login" | "register" | "reset-password">("login");
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [sections, setSections] = useState<SectionItem[]>([]);
   const [showAddSection, setShowAddSection] = useState(false);
@@ -133,6 +134,17 @@ function App() {
       activeTableId: "table-1",
     },
   });
+
+  // Check URL for reset-password route on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasResetToken = urlParams.has("token");
+    const hasResetEmail = urlParams.has("email");
+
+    if (hasResetToken && hasResetEmail) {
+      setAuthView("reset-password");
+    }
+  }, []);
 
   const handleSectionSelect = (sectionName: string) => {
     setActiveSection(sectionName);
@@ -1296,7 +1308,7 @@ function App() {
           onErrorDismiss={() => setAuthError(null)}
         />
       );
-    } else {
+    } else if (authView === "register") {
       return (
         <RegistrationPage
           onRegister={handleRegister}
@@ -1309,6 +1321,17 @@ function App() {
           onSuccessDismiss={() => setRegisterSuccess(null)}
           backendError={registerError}
           onBackendErrorDismiss={() => setRegisterError(null)}
+        />
+      );
+    } else if (authView === "reset-password") {
+      return (
+        <ResetPasswordPage
+          onSuccess={() => {
+            // Clear URL parameters and go back to login
+            window.history.replaceState({}, "", window.location.pathname);
+            setAuthView("login");
+            setAuthError(null);
+          }}
         />
       );
     }
