@@ -3,10 +3,10 @@ import { PrimaryButton } from "./PrimaryButton";
 import apiService from "../../services/apiService";
 
 interface ResetPasswordPageProps {
-  onSuccess: () => void;
+  onBackToLogin: () => void;
 }
 
-export function ResetPasswordPage({ onSuccess }: ResetPasswordPageProps) {
+export function ResetPasswordPage({ onBackToLogin }: ResetPasswordPageProps) {
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
@@ -80,7 +80,7 @@ export function ResetPasswordPage({ onSuccess }: ResetPasswordPageProps) {
       );
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        onSuccess();
+        onBackToLogin();
       }, 2000);
     } catch (err: any) {
       const status = err.response?.status;
@@ -323,7 +323,7 @@ export function ResetPasswordPage({ onSuccess }: ResetPasswordPageProps) {
           >
             تذكرت كلمة المرور؟{" "}
             <button
-              onClick={onSuccess}
+              onClick={onBackToLogin}
               className="hover:underline"
               style={{
                 color: "var(--primary-blue)",

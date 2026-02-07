@@ -78,7 +78,7 @@ function App() {
   // Authentication state
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [authView, setAuthView] = useState<"login" | "register" | "reset-password">("login");
+  const [authView, setAuthView] = useState<"login" | "register" | "resetPassword">("login");
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [sections, setSections] = useState<SectionItem[]>([]);
   const [showAddSection, setShowAddSection] = useState(false);
@@ -142,7 +142,7 @@ function App() {
     const hasResetEmail = urlParams.has("email");
 
     if (hasResetToken && hasResetEmail) {
-      setAuthView("reset-password");
+      setAuthView("resetPassword");
     }
   }, []);
 
@@ -1323,10 +1323,10 @@ function App() {
           onBackendErrorDismiss={() => setRegisterError(null)}
         />
       );
-    } else if (authView === "reset-password") {
+    } else if (authView === "resetPassword") {
       return (
         <ResetPasswordPage
-          onSuccess={() => {
+          onBackToLogin={() => {
             // Clear URL parameters and go back to login
             window.history.replaceState({}, "", window.location.pathname);
             setAuthView("login");
