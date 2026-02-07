@@ -57,8 +57,8 @@ export function ResetPasswordPage({ onSuccess }: ResetPasswordPageProps) {
       return;
     }
 
-    if (password.length < 8) {
-      setError("يجب أن تكون كلمة المرور 8 أحرف على الأقل");
+    if (password.length < 6) {
+      setError("يجب أن تكون كلمة المرور 6 أحرف على الأقل");
       return;
     }
 
