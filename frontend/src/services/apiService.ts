@@ -106,6 +106,21 @@ class ApiService {
     return response.data;
   }
 
+  async resetPassword(
+    email: string,
+    token: string,
+    password: string,
+    passwordConfirmation: string,
+  ) {
+    const response = await this.api.post("/auth/reset-password", {
+      email,
+      token,
+      password,
+      password_confirmation: passwordConfirmation,
+    });
+    return response.data;
+  }
+
   async register(
     name: string,
     username: string,
