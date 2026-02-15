@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import apiService from "../../services/apiService";
 
 interface Image {
@@ -19,55 +19,50 @@ export function ImageGallery() {
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
   const [blobUrls, setBlobUrls] = useState<{ [key: number]: string }>({});
-  const blobUrlsRef = useRef(blobUrls);
-  const loadingIdsRef = useRef<Set<number>>(new Set());
-
-  blobUrlsRef.current = blobUrls;
 
   useEffect(() => {
     loadImages();
   }, []);
 
+  // Load blob URLs for all images
   useEffect(() => {
     images.forEach((image) => {
-      if (blobUrlsRef.current[image.id]) return;
-      if (loadingIdsRef.current.has(image.id)) return;
-      loadingIdsRef.current.add(image.id);
-      getDisplayUrl(image.id);
+      if (!blobUrls[image.id]) {
+        getDisplayUrl(image.id);
+      }
     });
-  }, [images]);
+  }, [images, blobUrls]);
 
+  // Cleanup blob URLs on unmount
   useEffect(() => {
     return () => {
-      Object.values(blobUrlsRef.current).forEach((url) => {
+      Object.values(blobUrls).forEach((url) => {
         URL.revokeObjectURL(url);
       });
     };
-  }, []);
+  }, [blobUrls]);
 
+  // Fetch image as blob and create object URL for secure display
   const getDisplayUrl = async (imageId: number): Promise<string> => {
-    if (blobUrlsRef.current[imageId]) {
-      return blobUrlsRef.current[imageId];
+    if (blobUrls[imageId]) {
+      return blobUrls[imageId];
     }
 
     try {
-      const response = await apiService["api"].get(`/images/${imageId}/file`, {
-        responseType: "blob",
+      // Use apiService to handle authentication properly
+      const response = await apiService['api'].get(`/images/${imageId}/file`, {
+        responseType: 'blob',
       });
 
       const blob = response.data;
       const blobUrl = URL.createObjectURL(blob);
-
-      setBlobUrls((prev) => {
-        const next = { ...prev, [imageId]: blobUrl };
-        loadingIdsRef.current.delete(imageId);
-        return next;
-      });
-
+      
+      // Cache the blob URL
+      setBlobUrls((prev) => ({ ...prev, [imageId]: blobUrl }));
+      
       return blobUrl;
     } catch (error) {
       console.error("[ImageGallery] Error fetching image:", error);
-      loadingIdsRef.current.delete(imageId);
       return "";
     }
   };
@@ -113,10 +108,13 @@ export function ImageGallery() {
       setUploadError(null);
       setUploadSuccess(null);
 
-      await apiService.uploadImage(file);
+      const response = await apiService.uploadImage(file);
+      console.log("[ImageGallery] Upload Response:", response);
+      const newImage = response?.data || response;
+
+      setImages((prev) => [newImage, ...prev]);
       setUploadSuccess("تم تحميل الصورة بنجاح");
       event.target.value = "";
-      await loadImages();
 
       // Clear success message after 3 seconds
       setTimeout(() => setUploadSuccess(null), 3000);
@@ -148,19 +146,16 @@ export function ImageGallery() {
     }
   };
 
-  const formatFileSize = (bytes: number | undefined): string => {
-    if (bytes == null || Number.isNaN(Number(bytes))) return "—";
+  const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB"];
-    const i = Math.max(0, Math.min(2, Math.floor(Math.log(bytes) / Math.log(k))));
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
-  const formatDate = (dateString: string | undefined): string => {
-    if (dateString == null || dateString === "") return "—";
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    if (Number.isNaN(date.getTime())) return "—";
     return date.toLocaleDateString("ar-SA", {
       year: "numeric",
       month: "long",

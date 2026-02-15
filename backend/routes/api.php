@@ -14,8 +14,9 @@ Route::middleware('cors')->group(function () {
     // Public routes
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+
+    // Image file serving (needs special handling for img tags)
+    Route::get('/images/{id}/file', [ImageController::class, 'show']);
 
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
@@ -45,7 +46,6 @@ Route::middleware('cors')->group(function () {
 
         // Images
         Route::get('/images', [ImageController::class, 'index']);
-        Route::get('/images/{id}/file', [ImageController::class, 'show']);
         Route::post('/images', [ImageController::class, 'store']);
         Route::delete('/images/{image}', [ImageController::class, 'destroy']);
 
