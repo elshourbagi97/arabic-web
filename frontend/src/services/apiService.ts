@@ -14,7 +14,7 @@ import axios, { AxiosInstance } from "axios";
 class ApiService {
   private api: AxiosInstance;
   // Use production API URL
-  private baseURL = "https://b2005.com/api";
+  private baseURL = "http://localhost:8000/api";
   private token: string | null = null;
 
   constructor() {
